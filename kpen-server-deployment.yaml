@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kpen-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kpen-pod
+  template:
+    metadata:
+      labels:
+        app: kpen-pod
+    spec:
+      containers:
+        - name: kpen-app
+          image: 626351541105.dkr.ecr.us-east-2.amazonaws.com/kpen-io:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3010

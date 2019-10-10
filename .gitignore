@@ -1,0 +1,11 @@
+s3cache
+.idea
+*.iml
+build
+.gradle
+node_modules
+.env
+.env*
+*.pem
+web/src/main/resources/static/*
+.aws-credentials

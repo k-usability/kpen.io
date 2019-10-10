@@ -1,0 +1,24 @@
+---
+title: {{title}}
+weight: 1
+---
+
+# {{title}}
+
+{{#each exampleList}}
+## {{description}}
+
+{{#if link}}
+[Run in kpen.io]({{link}})
+{{/if}}
+
+{{{explanation}}}
+
+```solidity
+{{{program}}}
+```
+
+```
+{{{spec}}}
+```
+{{/each}}

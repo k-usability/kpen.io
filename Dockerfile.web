@@ -1,0 +1,15 @@
+FROM openjdk:8-jdk-alpine
+
+RUN apk add --update make python3
+
+ENV APP_FILE kpen-0.0.1.jar
+ENV APP_HOME /usr/app
+EXPOSE 3010
+COPY web/build/libs/*.jar $APP_HOME/
+COPY web/data $APP_HOME/data
+COPY .env.production $APP_HOME/.env
+COPY .aws-credentials /root/.aws/credentials
+RUN echo $HOME
+WORKDIR $APP_HOME
+ENTRYPOINT ["sh", "-c"]
+CMD ["exec java -jar $APP_FILE"]

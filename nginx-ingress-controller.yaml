@@ -1,0 +1,31 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: ingress-nginx
+  namespace: ingress-nginx
+  labels:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+  annotations:
+    # Enable PROXY protocol
+    service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: "*"
+    # Specify SSL certificate to use
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:us-east-2:626351541105:certificate/71f1e256-2a20-4913-ae20-67465f4df33c
+    # Use SSL on the HTTPS port
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: https
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+  ports:
+    - name: http
+      port: 80
+      # We are using a target port of 7000 here instead of 80, this is to work around
+      # https://github.com/kubernetes/ingress-nginx/issues/2724
+      # This goes together with the `http-snippet` in the ConfigMap.
+      targetPort: 7000
+    - name: https
+      port: 443
+      # deployment port
+      targetPort: 8080
