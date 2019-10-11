@@ -95,8 +95,14 @@ public class GenMd {
                     ex.setName(exname);
                     ex.setProjectId(config.kpenioprojectid);
                     ex.setExplanation(FileUtils.readFileToString(new File(expath + "/explanation.md"), Charset.defaultCharset()));
-                    ex.setSpec(FileUtils.readFileToString(new File(expath + "/spec.ini"), Charset.defaultCharset()));
-                    ex.setProgram(FileUtils.readFileToString(new File(expath + "/" + programFileName), Charset.defaultCharset()));
+
+                    String spec = FileUtils.readFileToString(new File(expath + "/spec.ini"), Charset.defaultCharset());
+                    String program = FileUtils.readFileToString(new File(expath + "/" + programFileName), Charset.defaultCharset());
+                    spec = "{{< highlight ini \"linenos=inline\" >}}\n" + spec + "\n{{< / highlight >}}";
+                    program = "{{< highlight solidity \"linenos=inline\" >}}\n" + program + "\n{{< / highlight >}}";
+
+                    ex.setSpec(spec);
+                    ex.setProgram(program);
                     if (config.kpenioprojectid != null && !config.kpenioprojectid.isEmpty()) {
                         ex.setLink("https://kpen.io/project/" + config.kpenioprojectid);
                     }
