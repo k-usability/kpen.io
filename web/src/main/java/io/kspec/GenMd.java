@@ -78,6 +78,7 @@ public class GenMd {
 
                 List<Example> exampleList = new ArrayList();
                 for (File exdir : exFileList) {
+                    System.out.println("Processing " + exdir.getAbsolutePath());
                     String exname = exdir.getName();
                     String expath = exdir.getAbsolutePath();
                     String programFileName = null;
@@ -95,6 +96,13 @@ public class GenMd {
                     ex.setName(exname);
                     ex.setProjectId(config.kpenioprojectid);
                     ex.setExplanation(FileUtils.readFileToString(new File(expath + "/explanation.md"), Charset.defaultCharset()));
+
+                    File specYamlFile = new File(expath + "/spec.yaml");
+                    if (specYamlFile.exists()) {
+                        String specYaml = FileUtils.readFileToString(specYamlFile, Charset.defaultCharset());
+                        Object result = new Yaml().load(specYaml);
+                        System.out.println(result);
+                    }
 
                     String spec = FileUtils.readFileToString(new File(expath + "/spec.ini"), Charset.defaultCharset());
                     String program = FileUtils.readFileToString(new File(expath + "/" + programFileName), Charset.defaultCharset());

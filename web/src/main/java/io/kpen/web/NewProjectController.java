@@ -146,7 +146,7 @@ public class NewProjectController {
             person.insert();
         }
 
-        String bucketName = "kjob";
+        String bucketName = dotenv.get("APP_JOB_BUCKET");
         String bucketKey = PROGRAM_FILE_NAME + "-" + UUID.randomUUID().toString();
 
         OffsetDateTime now = OffsetDateTime.now();

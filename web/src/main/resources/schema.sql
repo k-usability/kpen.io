@@ -6,8 +6,6 @@ CREATE TABLE person (
     is_admin boolean not null default false
 );
 
-INSERT INTO person (id, is_admin) VALUES (0, true);
-
 CREATE TABLE project (
     id serial primary key,
     name text not null,

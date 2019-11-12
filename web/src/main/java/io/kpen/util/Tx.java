@@ -63,7 +63,7 @@ public class Tx {
 		String username = dotenv.get("APP_DB_USER");
 		String password = dotenv.get("APP_DB_PASS");
 		String dbname = dotenv.get("APP_DB_NAME");
-		String url = "jdbc:postgresql://" + dotenv.get("APP_DB_HOST") + ":" + dotenv.get("APP_DB_PORT") + "/" + dbname;
+		String url = "jdbc:postgresql://" + dotenv.get("APP_DB_HOST") + ":" + dotenv.get("APP_DB_PORT") + "/" + dbname + "?ssl=true";
 
 		System.out.println("username: " + username);
 		System.out.println("url: " + url);

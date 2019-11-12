@@ -33,8 +33,8 @@ docker build -t kpen-io -f Dockerfile.web .
 
 if [ $1 = "push" ]; then
   `aws ecr get-login --no-include-email --region us-east-2`
-  docker tag kpen-io:latest 626351541105.dkr.ecr.us-east-2.amazonaws.com/kpen-io:latest
-  docker push 626351541105.dkr.ecr.us-east-2.amazonaws.com/kpen-io:latest
+  docker tag kpen-io:latest 025853706937.dkr.ecr.us-west-2.amazonaws.com/kpen-io:latest
+  docker push 025853706937.dkr.ecr.us-west-2.amazonaws.com/kpen-io:latest
   exit 0
 fi
 

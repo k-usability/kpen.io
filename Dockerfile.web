@@ -9,6 +9,7 @@ COPY web/build/libs/*.jar $APP_HOME/
 COPY web/data $APP_HOME/data
 COPY .env.production $APP_HOME/.env
 COPY .aws-credentials /root/.aws/credentials
+COPY rds-ca-2015-root.pem $APP_HOME/.postgresql
 RUN echo $HOME
 WORKDIR $APP_HOME
 ENTRYPOINT ["sh", "-c"]

@@ -4,7 +4,7 @@ metadata:
   name: kpen-elb-service
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
-    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:us-east-2:626351541105:certificate/71f1e256-2a20-4913-ae20-67465f4df33c
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:us-west-2:025853706937:certificate/d99a1fb9-296b-484a-836b-b3a7dc1eafe6
     service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
 spec:
   selector:
