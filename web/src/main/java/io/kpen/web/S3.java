@@ -1,9 +1,15 @@
 package io.kpen.web;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
+import com.amazonaws.services.s3.transfer.MultipleFileDownload;
+import com.amazonaws.services.s3.transfer.MultipleFileUpload;
+import com.amazonaws.services.s3.transfer.TransferManager;
+import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import org.apache.commons.io.FileUtils;
 
 import java.io.BufferedReader;
@@ -20,31 +26,38 @@ public class S3 {
     public static final String S3_CACHE_DIR = "s3cache";
     public static final Regions AWS_REGON = Regions.US_EAST_2;
 
-    private AmazonS3 client;
-
-    public S3() {
-        client = AmazonS3ClientBuilder.standard()
-                .withRegion(AWS_REGON)
-                .build();
-    }
-
     public static String getUrl(String bucketName, String keyName) {
         return "https://" + bucketName + ".s3.amazonaws.com/" + keyName;
     }
 
+    public AmazonS3 newS3Client() {
+        return AmazonS3ClientBuilder.standard()
+                .withRegion(AWS_REGON)
+                .withCredentials(new ProfileCredentialsProvider("kpen"))
+                .build();
+    }
+
+    public TransferManager newXferManager() {
+        TransferManager xfer_mgr = TransferManagerBuilder
+                .standard()
+                .withS3Client(newS3Client())
+                .build();
+       return xfer_mgr;
+    }
+
     public void uploadDir(String bucketName, String keyPrefix, Path dirToUpload) throws IOException {
-        for (Path path : Files.walk(dirToUpload).collect(Collectors.toList())) {
-            File file = path.toFile();
-            if (file.isDirectory()) continue;
-
-            String subKey = dirToUpload.relativize(path).toString();
-            String key = keyPrefix + "/" + subKey;
-            System.out.println(key);
-
-            PutObjectRequest request = new PutObjectRequest(bucketName, key, file);
-            request.setCannedAcl(CannedAccessControlList.PublicRead);
-            client.putObject(request);
+        TransferManager xfer_mgr = newXferManager();
+        try {
+            MultipleFileUpload xfer = xfer_mgr.uploadDirectory(bucketName, keyPrefix, dirToUpload.toFile(), true);
+            // loop with Transfer.isDone()
+            XferMgrProgress.showTransferProgress(xfer);
+            // or block with Transfer.waitForCompletion()
+            XferMgrProgress.waitForCompletion(xfer);
+        } catch (AmazonServiceException e) {
+            System.err.println(e.getErrorMessage());
+            System.exit(1);
         }
+        xfer_mgr.shutdownNow();
     }
 
     public File get(String bucketName, String bucketKey, String fileRelativePath) throws IOException {
@@ -61,6 +74,7 @@ public class S3 {
     }
 
     public String getContent(String bucketName, String bucketKey) throws IOException {
+        AmazonS3 client = newS3Client();
         GetObjectRequest req = new GetObjectRequest(bucketName, bucketKey);
         S3Object obj = client.getObject(req);
         String content;
@@ -76,19 +90,17 @@ public class S3 {
             bucketDir.mkdirs();
         }
 
-        ObjectListing listing = client.listObjects( bucketName, keyPrefix );
-        List<S3ObjectSummary> summaries = listing.getObjectSummaries();
-        while (listing.isTruncated()) {
-            listing = client.listNextBatchOfObjects (listing);
-            summaries.addAll (listing.getObjectSummaries());
+        TransferManager xfer_mgr = newXferManager();
+        try {
+            MultipleFileDownload xfer = xfer_mgr.downloadDirectory(bucketName, keyPrefix, bucketDir, true);
+            // loop with Transfer.isDone()
+            XferMgrProgress.showTransferProgress(xfer);
+            // or block with Transfer.waitForCompletion()
+            XferMgrProgress.waitForCompletion(xfer);
+        } catch (AmazonServiceException e) {
+            System.err.println(e.getErrorMessage());
+            System.exit(1);
         }
-
-        for (S3ObjectSummary s : summaries) {
-            String content = getContent(bucketName, s.getKey());
-            String relativeKey = s.getKey().replaceAll(keyPrefix, "");
-            System.out.println("Relative key: " + relativeKey);
-            File file = new File(bucketDir.getAbsolutePath() + "/" + relativeKey);
-            FileUtils.write(file, content, Charset.defaultCharset());
-        }
+        xfer_mgr.shutdownNow();
     }
 }
