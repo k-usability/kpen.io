@@ -43,3 +43,7 @@ if [ $1 = "run" ]; then
   exit 0
 fi
 
+if [ $1 = "sh" ]; then
+  docker start -a -i `docker create -t -i kpen-io:latest sh`
+fi
+

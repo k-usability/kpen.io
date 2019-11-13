@@ -10,7 +10,9 @@ COPY web/data $APP_HOME/data
 COPY .env.production $APP_HOME/.env
 COPY .aws-credentials /root/.aws/credentials
 COPY rds-ca-2015-root.pem /root/.postgresql/root.crt
+COPY web.sh $APP_HOME
+COPY worker.sh $APP_HOME
 RUN echo $HOME
 WORKDIR $APP_HOME
-ENTRYPOINT ["sh", "-c"]
-CMD ["exec java -jar $APP_FILE"]
+#ENTRYPOINT ["sh", "-c"]
+#CMD ["exec java -jar $APP_FILE"]
