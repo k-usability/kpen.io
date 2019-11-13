@@ -5,6 +5,7 @@ import io.kpen.jooq.tables.records.JobRecord;
 import io.kpen.jooq.tables.records.PersonRecord;
 import io.kpen.jooq.tables.records.ProjectRecord;
 import io.kpen.util.Auth;
+import io.kpen.util.S3;
 import io.kpen.util.Tx;
 import lombok.Data;
 import org.apache.commons.exec.CommandLine;

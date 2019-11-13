@@ -10,7 +10,7 @@ spec:
     spec:
       containers:
         - name: c
-          image: 626351541105.dkr.ecr.us-east-2.amazonaws.com/kworker:latest
+          image: 472805539381.dkr.ecr.us-east-2.amazonaws.com/kworker:latest
           resources:
             requests:
               memory: "3G"

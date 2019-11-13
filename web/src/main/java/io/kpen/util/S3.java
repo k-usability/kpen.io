@@ -1,4 +1,4 @@
-package io.kpen.web;
+package io.kpen.util;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
@@ -6,10 +6,8 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
-import com.amazonaws.services.s3.transfer.MultipleFileDownload;
-import com.amazonaws.services.s3.transfer.MultipleFileUpload;
-import com.amazonaws.services.s3.transfer.TransferManager;
-import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
+import com.amazonaws.services.s3.transfer.*;
+import io.kpen.web.XferMgrProgress;
 import org.apache.commons.io.FileUtils;
 
 import java.io.BufferedReader;
@@ -20,6 +18,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class S3 {
@@ -30,14 +29,14 @@ public class S3 {
         return "https://" + bucketName + ".s3.amazonaws.com/" + keyName;
     }
 
-    public AmazonS3 newS3Client() {
+    private static AmazonS3 newS3Client() {
         return AmazonS3ClientBuilder.standard()
                 .withRegion(AWS_REGON)
                 .withCredentials(new ProfileCredentialsProvider("kpen"))
                 .build();
     }
 
-    public TransferManager newXferManager() {
+    private static TransferManager newXferManager() {
         TransferManager xfer_mgr = TransferManagerBuilder
                 .standard()
                 .withS3Client(newS3Client())
@@ -45,22 +44,34 @@ public class S3 {
        return xfer_mgr;
     }
 
-    public void uploadDir(String bucketName, String keyPrefix, Path dirToUpload) throws IOException {
-        TransferManager xfer_mgr = newXferManager();
-        try {
-            MultipleFileUpload xfer = xfer_mgr.uploadDirectory(bucketName, keyPrefix, dirToUpload.toFile(), true);
-            // loop with Transfer.isDone()
-            XferMgrProgress.showTransferProgress(xfer);
-            // or block with Transfer.waitForCompletion()
-            XferMgrProgress.waitForCompletion(xfer);
-        } catch (AmazonServiceException e) {
-            System.err.println(e.getErrorMessage());
-            System.exit(1);
-        }
-        xfer_mgr.shutdownNow();
+    public interface XferRunnable<T> {
+        Transfer xfer(TransferManager mgr) throws AmazonServiceException;
     }
 
-    public File get(String bucketName, String bucketKey, String fileRelativePath) throws IOException {
+    public static void xfermgr(XferRunnable r) throws AmazonServiceException {
+        TransferManager mgr = newXferManager();
+        Transfer x = r.xfer(mgr);
+        XferMgrProgress.showTransferProgress(x);
+        XferMgrProgress.waitForCompletion(x);
+        mgr.shutdownNow();
+    }
+
+    public static void uploadDir(String bucketName, String keyPrefix, Path dirToUpload) throws IOException {
+        xfermgr( mgr -> mgr.uploadDirectory(bucketName, keyPrefix, dirToUpload.toFile(), true));
+    }
+
+    public static String downloadDir(String bucketName, String keyPrefix) throws IOException {
+        File bucketDir = new File(S3_CACHE_DIR + "/" + bucketName);
+        if (!bucketDir.exists()) {
+            bucketDir.mkdirs();
+        }
+
+        xfermgr( mgr -> mgr.downloadDirectory(bucketName, keyPrefix, bucketDir, true));
+
+        return bucketDir.getAbsolutePath() + "/" + keyPrefix;
+    }
+
+    public static File get(String bucketName, String bucketKey, String fileRelativePath) throws IOException {
         File bucketDir = new File(S3_CACHE_DIR + "/" + bucketKey);
         if (!bucketDir.exists()) downloadDir( bucketName, bucketKey);
 
@@ -73,7 +84,7 @@ public class S3 {
         return cachedFile;
     }
 
-    public String getContent(String bucketName, String bucketKey) throws IOException {
+    public static String getContent(String bucketName, String bucketKey) throws IOException {
         AmazonS3 client = newS3Client();
         GetObjectRequest req = new GetObjectRequest(bucketName, bucketKey);
         S3Object obj = client.getObject(req);
@@ -84,23 +95,4 @@ public class S3 {
         return content;
     }
 
-    public void downloadDir(String bucketName, String keyPrefix) throws IOException {
-        File bucketDir = new File(S3_CACHE_DIR + "/" + bucketName);
-        if (!bucketDir.exists()) {
-            bucketDir.mkdirs();
-        }
-
-        TransferManager xfer_mgr = newXferManager();
-        try {
-            MultipleFileDownload xfer = xfer_mgr.downloadDirectory(bucketName, keyPrefix, bucketDir, true);
-            // loop with Transfer.isDone()
-            XferMgrProgress.showTransferProgress(xfer);
-            // or block with Transfer.waitForCompletion()
-            XferMgrProgress.waitForCompletion(xfer);
-        } catch (AmazonServiceException e) {
-            System.err.println(e.getErrorMessage());
-            System.exit(1);
-        }
-        xfer_mgr.shutdownNow();
-    }
 }

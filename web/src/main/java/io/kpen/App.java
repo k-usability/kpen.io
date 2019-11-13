@@ -12,6 +12,7 @@ import static org.zalando.logbook.Conditions.*;
 public class App {
     public static void main(String[] args) throws IOException {
         System.setProperty("logging.level.org.springframework.web", "DEBUG");
+        System.setProperty("logging.level.org.apache.http", "INFO");
         System.setProperty("spring.http.log-request-details", "true");
         System.setProperty("logging.level.org.zalando.logbook", "TRACE");
 
