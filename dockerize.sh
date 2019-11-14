@@ -11,10 +11,13 @@ if [ "$#" -ne 1 ]; then
     exit 1
 fi
 
-if [ $1 = "sh" ]; then
-  docker build -t kpen-io -f Dockerfile.web .
-  docker run -it -p 3010:3010 kpen-io:latest /bin/sh
-  exit 0
+
+if [ $1 = "web" ]; then
+  docker start -a -i `docker create -p 3010:3010  -t -i kpen-io:latest /usr/app/web.sh`
+fi
+
+if [ $1 = "worker" ]; then
+  docker start -a -i `docker create  -t -i kpen-io:latest /usr/app/worker.sh`
 fi
 
 if [ $1 = "jar" ]; then
@@ -42,8 +45,3 @@ if [ $1 = "run" ]; then
   docker run -p 3010:3010 kpen-io:latest
   exit 0
 fi
-
-if [ $1 = "sh" ]; then
-  docker start -a -i `docker create -t -i kpen-io:latest sh`
-fi
-

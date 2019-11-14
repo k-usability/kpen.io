@@ -150,6 +150,8 @@ public class NewProjectController {
         String bucketName = dotenv.get("APP_JOB_BUCKET");
         String bucketKey = PROGRAM_FILE_NAME + "-" + UUID.randomUUID().toString();
 
+        S3.uploadDir(bucketName, bucketKey, Paths.get(codePath));
+
         OffsetDateTime now = OffsetDateTime.now();
         ProjectRecord project = ctx.newRecord(PROJECT)
                 .setCreationDt(now)
@@ -163,9 +165,6 @@ public class NewProjectController {
                 .setUserId(person.getId());
         project.insert();
         resp.setProjectId(project.getId());
-
-        S3 s3 = new S3();
-        s3.uploadDir(bucketName, bucketKey, Paths.get(codePath));
 
         for (File speck : new File(codePath + "/generated").listFiles()) {
             if (!speck.getName().endsWith("spec.k")) continue;

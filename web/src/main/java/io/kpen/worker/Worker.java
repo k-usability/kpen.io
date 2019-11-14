@@ -5,6 +5,8 @@ import io.kpen.jooq.tables.records.JobRecord;
 import io.kpen.util.S3;
 import io.kpen.util.Tx;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.logging.log4j.*;
+import org.apache.logging.log4j.spi.LoggerContext;
 import org.jooq.DSLContext;
 
 import java.io.File;
@@ -14,6 +16,7 @@ import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static io.kpen.jooq.Tables.JOB;

@@ -65,9 +65,6 @@ public class Tx {
 		String dbname = dotenv.get("APP_DB_NAME");
 		String url = "jdbc:postgresql://" + dotenv.get("APP_DB_HOST") + ":" + dotenv.get("APP_DB_PORT") + "/" + dbname + "?ssl=true";
 
-		System.out.println("username: " + username);
-		System.out.println("url: " + url);
-
 		Throwable error = null;
 		Connection conn = null;
 		T returnValue = null;

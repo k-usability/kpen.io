@@ -1,9 +1,18 @@
-FROM openjdk:8-jdk-alpine
+FROM ubuntu:bionic
 
-RUN apk add --update make python3
+RUN apt-get update
+RUN apt-get install -qy openjdk-8-jre z3 flex libssl1.0.0 python3.6
+RUN ln -s /usr/bin/python3.6 /usr/bin/python3
+
+RUN update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
+ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
 
 ENV APP_FILE kpen-0.0.1.jar
 ENV APP_HOME /usr/app
+WORKDIR $APP_HOME
+
+ENV LC_ALL=C.UTF-8
+
 EXPOSE 3010
 COPY web/build/libs/*.jar $APP_HOME/
 COPY web/data $APP_HOME/data
@@ -13,6 +22,12 @@ COPY rds-ca-2015-root.pem /root/.postgresql/root.crt
 COPY web.sh $APP_HOME
 COPY worker.sh $APP_HOME
 RUN echo $HOME
-WORKDIR $APP_HOME
+
+ADD k/k $APP_DIR/k
+ADD k/evm-semantics $APP_DIR/evm-semantics
+ADD k/evm-semantics-call-log $APP_DIR/evm-semantics-call-log
+RUN cd $APP_DIR/evm-semantics && $APP_DIR/k/k-distribution/target/release/k/bin/kompile -v --debug --backend java -I .build/java -d .build/java --main-module ETHEREUM-SIMULATION --syntax-module ETHEREUM-SIMULATION .build/java/driver.k
+RUN cd $APP_DIR/evm-semantics-call-log && $APP_DIR/k/k-distribution/target/release/k/bin/kompile -v --debug --backend java -I .build/java -d .build/java --main-module ETHEREUM-SIMULATION --syntax-module ETHEREUM-SIMULATION .build/java/driver.k
+
 #ENTRYPOINT ["sh", "-c"]
 #CMD ["exec java -jar $APP_FILE"]
