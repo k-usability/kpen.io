@@ -14,10 +14,12 @@ fi
 
 if [ $1 = "web" ]; then
   docker start -a -i `docker create -p 3010:3010  -t -i kpen-io:latest /usr/app/web.sh`
+  exit 0
 fi
 
 if [ $1 = "worker" ]; then
   docker start -a -i `docker create  -t -i kpen-io:latest /usr/app/worker.sh`
+  exit 0
 fi
 
 if [ $1 = "jar" ]; then

@@ -79,7 +79,7 @@ public class Kw {
         Process p = null;
         try {
             p = pb.start();
-            boolean exitedWithinTimeout = p.waitFor(1, TimeUnit.SECONDS);
+            boolean exitedWithinTimeout = p.waitFor(timeoutSecs, TimeUnit.SECONDS);
             if (exitedWithinTimeout) {
                 System.out.println("Exited normally");
                 statusCode = p.exitValue();
