@@ -1,16 +1,18 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: kworker-job
+  name: worker
 spec:
   parallelism: 2
   template:
     metadata:
-      name: kworker-job
+      name: worker
     spec:
       containers:
         - name: c
-          image: 472805539381.dkr.ecr.us-east-2.amazonaws.com/kworker:latest
+          image: 472805539381.dkr.ecr.us-east-2.amazonaws.com/kpen-io:latest
+          command: ["/usr/app/worker.sh"]
+          imagePullPolicy: Always
           resources:
             requests:
               memory: "3G"

@@ -15,6 +15,7 @@ spec:
       containers:
         - name: kpen-app
           image: 472805539381.dkr.ecr.us-east-2.amazonaws.com/kpen-io:latest
+          command: ["/usr/app/web.sh"]
           imagePullPolicy: Always
           ports:
             - containerPort: 3010
