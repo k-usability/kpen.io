@@ -1,0 +1,17 @@
+-spec:
+  type: map
+  -name: string
+  -if:
+    type: map
+    -match:
+      type: map
+      arbitrary: true
+    -where:
+      type: list
+  -then:
+    type: map
+    -match:
+      type: map
+      arbitrary: true
+    -where:
+      type: list

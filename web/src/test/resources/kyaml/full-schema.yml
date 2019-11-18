@@ -1,0 +1,23 @@
+-spec:
+  type: list
+  arbitrary: true
+  value-types:
+    map:
+      rule:
+        type: map
+        -name: string
+        -inherits: string
+        -if:
+          type: map
+          -match:
+            type: map
+            arbitrary: true
+          -where:
+            type: list
+        -then:
+          type: map
+          -match:
+            type: map
+            arbitrary: true
+          -where:
+            type: list

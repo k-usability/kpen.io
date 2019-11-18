@@ -1,0 +1,57 @@
+spec:
+  - rule:
+      name: base
+      if:
+        match:
+          callData: \#abiCallData2("execute(bytes32,uint8[2],bytes32[2],bytes32[2])",
+            \#bytes32(HASH),
+            \#uint8(SIGV0), \#uint8(SIGV1),
+            \#bytes32(SIGR0), \#bytes32(SIGR1),
+            \#bytes32(SIGS0), \#bytes32(SIGS1))
+        where:
+          - \#rangeUInt(256, HASH)
+          - \#rangeUInt(8, SIGV0)
+          - \#rangeUInt(8, SIGV1)
+          - \#rangeBytes(32, SIGR0)
+          - \#rangeBytes(32, SIGR1)
+          - \#rangeBytes(32, SIGS0)
+          - \#rangeBytes(32, SIGS1)
+          - ECREC_DATA0 ==K
+            \#encodeArgs(\#bytes32(HASH), \#uint8(SIGV0),
+            \#bytes32(SIGR0), \#bytes32(SIGS0))
+          - ECREC_DATA1 ==K
+            \#encodeArgs(\#bytes32(HASH), \#uint8(SIGV1),
+            \#bytes32(SIGR1), \#bytes32(SIGS1))
+  
+  - rule:
+      name: sigs-valid
+      inherits: base
+      if:
+        where:
+          - RECOVERED0 ==Int \#symEcrec(ECREC_DATA0)
+          - RECOVERED1 ==Int \#symEcrec(ECREC_DATA1)
+          - not: \#ecrecEmpty(ECREC_DATA0)
+          - not: \#ecrecEmpty(ECREC_DATA1)
+      then:
+        match:
+          statusCode: EVMC_SUCCESS
+  
+  - rule:
+      name: sig0-invalid
+      inherits: base
+      if:
+        where:
+          - \#ecrecEmpty(ECREC_DATA0)
+      then:
+        match:
+          statusCode: EVMC_REVERT
+  
+  - rule:
+      name: sig1-invalid
+      inherits: base
+      if:
+        where:
+          - \#ecrecEmpty(ECREC_DATA1)
+      then:
+        match:
+          statusCode: EVMC_REVERT

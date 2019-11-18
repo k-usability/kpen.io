@@ -1,0 +1,8 @@
+spec:
+  if:
+    match:
+      callData: \#abiCallData("execute", .TypedArgs)
+  then:
+    match:
+      statusCode: EVMC_SUCCESS
+      output: \#encodeArgs(#uint256(5))
