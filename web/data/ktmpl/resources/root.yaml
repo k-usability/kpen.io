@@ -42,7 +42,7 @@ spec:
           receiptsRoot: _
           logsBloom: _
           difficulty: _
-          number: BLOCK_HUM
+          number: BLOCK_NUM
           gasLimit: _
           gasUsed: _
           timestamp: NOW

@@ -5,6 +5,7 @@ import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.FileTemplateLoader;
 import com.google.gson.Gson;
+import io.kyaml.model.KRule;
 import io.kyaml.model.KYaml;
 import org.apache.commons.io.FileUtils;
 
@@ -25,13 +26,15 @@ public class DeserializeTest {
             throw new RuntimeException();
         }
         KYaml kyaml = new Deserialize(specStr).run();
-        Map<String,Object> cells = new Translate(kyaml).toCellMap();
-
         FileTemplateLoader loader = new FileTemplateLoader("web/src/main/resources");
         loader.setSuffix(".hbs");
         Handlebars handlebars = new Handlebars(loader);
         Template template = handlebars.compile("evm-spec-tmpl-yaml.k");
-        String s = template.apply(cells);
-        System.out.println(s);
+
+        for (KRule r : new Translate(kyaml).toKRules()) {
+            System.out.println(r.cells);
+            String s = template.apply(r.cells);
+            System.out.println(s);
+        }
     }
 }
