@@ -1,0 +1,84 @@
+specification:
+  - rule:
+      name: root
+      if:
+        match:
+          k: (\#execute => \\#halt) ~> _
+          exit-code: 1
+          mode: NORMAL
+          schedule: BYZANTIUM
+          analysis: .Map
+          output: _ => _
+          statusCode: _ => _
+          callStack: _
+          interimStates: _
+          touchedAccounts: _ => _
+          program: \#asMapOpCodes(\#dasmOpCodes(\#parseByteStack({CODE}), BYZANTIUM))
+          programBytes: \#parseByteStack({CODE})
+          id: \#CONTRACT_ID
+          caller: MSG_SENDER
+          callData: _
+          callValue: 0
+          wordStack: .WordStack => _
+          localMem: .Map => _
+          pc: 0 => _
+          gas: \#gas(INITGAS, 0, 0) => _
+          memoryUsed: 0 => _
+          previousGas: _ => _
+          static: false
+          callDepth: CD
+          selfDestruct: _
+          log: _
+          refund: _
+          gasPrice: _
+          origin: _
+          previousHash: _
+          ommersHash: _
+          coinbase: _ => _
+          stateRoot: _
+          transactionRoot: _
+          receiptsRoot: _
+          logsBloom: _
+          difficulty: _
+          number: BLOCK_HUM
+          gasLimit: _
+          gasUsed: _
+          timestamp: NOW
+          extractData: _
+          mixHash: _
+          blockNonce: _
+          ommerBlockHeaders: _
+          blockhash: BLOCK_HASHES
+          activeAccounts: SetItem(\#CONTRACT_ID) SetItem(\#CALLEE_ID) SetItem(1) _:Set
+          account:
+            - acctID: \#CONTRACT_ID
+              balance: _
+              code: _
+              storage: _
+              origStorage: _
+              nonce: _
+            - acctID: \#CALLEE_ID
+              balance: _
+              code: _
+              storage: _
+              origStorage: _
+              nonce: _
+            - acctID: 1
+              balance: 0
+              code: .WordStack
+              storage: .Map
+              origStorage: .Map
+              nonce: 0
+          txOrder: _
+          txPending: _
+          messages: _
+        where:
+          - \#rangeAddress(\#CONTRACT_ID)
+          - \#rangeUInt(256, NOW)
+          - \#rangeUInt(128, BLOCK_NUM)
+          - \#CONTRACT_ID  >Int 0
+          - not: \#CONTRACT_ID  in \#precompiledAccounts(BYZANTIUM)
+          - \#CALLEE_ID  >Int 0
+          - not: \#CALLEE_ID  in \#precompiledAccounts(BYZANTIUM)
+      then:
+        match:

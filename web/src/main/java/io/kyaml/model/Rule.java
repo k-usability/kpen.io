@@ -3,9 +3,9 @@ package io.kyaml.model;
 import lombok.Data;
 
 @Data
-public class Spec {
+public class Rule {
     public String name;
     public String inherits;
-    public If ifb;
-    public Then thenb;
+    public MatchWhere ifb;
+    public MatchWhere thenb;
 }

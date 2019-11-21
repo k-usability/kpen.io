@@ -7,6 +7,9 @@
         type: map
         -name: string
         -inherits: string
+        -macro:
+          type: map
+          arbitrary: true
         -if:
           type: map
           -match:

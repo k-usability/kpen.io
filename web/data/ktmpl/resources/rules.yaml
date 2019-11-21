@@ -1,0 +1,28 @@
+if:
+  match:
+    callData: \#callData
+
+#is equivalent to
+
+if:
+  match:
+    callData!: \#callData
+then:
+  match:
+    callData: \#callData
+
+---
+
+if:
+then:
+  match:
+    statusCode: EVM_SUCCESS
+
+#is equivalent to
+
+if:
+  match:
+    statusCode: _
+then:
+  match:
+    statusCode: EVM_SUCCESS
