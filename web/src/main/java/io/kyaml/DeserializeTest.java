@@ -7,6 +7,7 @@ import com.github.jknack.handlebars.io.FileTemplateLoader;
 import com.google.gson.Gson;
 import io.kyaml.model.*;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,94 +17,19 @@ import java.util.*;
 public class DeserializeTest {
 
     public static void main(String[] args) throws IOException {
-        //String specStr = FileUtils.readFileToString(new File("/home/sbugrara/k-examples/evm/ecrecover/ecrecoverloop01/spec.yaml"), Charset.defaultCharset());
-        String rootSpecStr = FileUtils.readFileToString(new File("/home/sbugrara/kpen.io/web/data/ktmpl/resources/root.yaml"), Charset.defaultCharset());
-        List<String> errors = Validate.validate(rootSpecStr);
-        if (!errors.isEmpty()) {
-            System.out.println("Invalid spec: " + errors);
-            throw new RuntimeException();
-        }
-        KYaml rootKYaml = new Deserialize(rootSpecStr).run();
+        File rootFileYaml = new File("/home/sbugrara/kpen.io/web/data/ktmpl/resources/root.yaml");
+        File outputDir = new File("/home/sbugrara/kevm-verify-benchmarks/0-overflow00-0.5.0/generated/");
+        File specFileYaml = new File("/home/sbugrara/k-examples/evm/simple/simple00/spec.yaml");
+        File kruleTemplateFile = new File("/home/sbugrara/kpen.io/web/data/ktmpl/resources/evm-spec-tmpl-yaml.k.hbs");
 
-        //String progSpecStr = FileUtils.readFileToString(new File("/home/sbugrara/k-examples/evm/ecrecover/ecrecoverloop01/spec.yaml"), Charset.defaultCharset());
-        String progSpecStr = FileUtils.readFileToString(new File("/home/sbugrara/k-examples/evm/overflow/overflow00/spec.yaml"), Charset.defaultCharset());
-        errors = Validate.validate(progSpecStr);
-        if (!errors.isEmpty()) {
-            System.out.println("Invalid spec: " + errors);
-            throw new RuntimeException();
-        }
-        KYaml mainkyaml = new Deserialize(progSpecStr).run();
+        KRuleGenerator gen = new KRuleGenerator()
+                .setRootYamlFile(rootFileYaml)
+                .setOutputDir(outputDir)
+                .setSpecYamlFile(specFileYaml)
+                .setKRuleTemplateFile(kruleTemplateFile);
 
-        Rule root = rootKYaml.rules.get(0);
-
-        {
-            HashMap<String, Rule> name2rule = new HashMap();
-            for (Rule r : mainkyaml.rules) {
-                if (r.name != null) {
-                    name2rule.put(r.name, r);
-                }
-            }
-            for (Rule r : mainkyaml.rules) {
-                if (r.inherits == null) {
-                    r.inheritsRule = root;
-                } else {
-                    r.inheritsRule = name2rule.get(r.inherits);
-                }
-            }
-        }
-
-        List<Rule> rules = new ArrayList();
-        rules.addAll(mainkyaml.rules);
-        rules.add(root);
-        HashSet<Rule> internal = new HashSet();
-        for (Rule r : rules) {
-            if (r.inheritsRule != null) {
-                internal.add(r.inheritsRule);
-            }
-        }
-        System.out.println("Internals: " + internal);
-
-        List<Rule> leaves = new ArrayList();
-        for (Rule r : rules) {
-            if (!internal.contains(r)) {
-                System.out.println("LEAF: " + r.name + " " + r.inheritsRule + " " + r.inheritsRule.inheritsRule);
-                leaves.add(r);
-            }
-        }
-
-        int namei = 0;
-        List<Rule> finalRules = new ArrayList();
-        for (Rule leaf : leaves) {
-            Rule current = new Rule();
-            if (leaf.name == null) {
-                current.name = "rule" + namei++;
-            } else {
-                current.name = leaf.name;
-            }
-            finalRules.add(current);
-
-            List<Rule> path = new ArrayList();
-            Rule r = leaf;
-            while (r != null) {
-                path.add(0, r);
-                r = r.inheritsRule;
-            }
-            System.out.println(leaf + "->" + path);
-            for (Rule p : path) {
-                overwriteWith(current, p);
-            }
-        }
-
-        FileTemplateLoader loader = new FileTemplateLoader("web/src/main/resources");
-        loader.setSuffix(".hbs");
-        Handlebars handlebars = new Handlebars(loader);
-        Template template = handlebars.compile("evm-spec-tmpl-yaml.k");
-
-        for (Rule r : finalRules) {
-            KRule kr = new Translate(r).toKRule();
-            String s = template.apply(kr.cells);
-            FileUtils.writeStringToFile(new File("/home/sbugrara/kevm-verify-benchmarks/0-overflow00-0.5.0/generated/" + r.name + ".k"), s, Charset.defaultCharset());
-        }
+        List<File> kruleFiles = gen.run();
+        System.out.println(StringUtils.join(kruleFiles, "\n"));
     }
 
     public static void overwriteWith(Rule current, Rule element) {
