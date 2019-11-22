@@ -1,11 +1,15 @@
 package io.kyaml.model;
 
-import lombok.Data;
-
-@Data
 public class Rule {
     public String name;
     public String inherits;
-    public MatchWhere ifb;
-    public MatchWhere thenb;
+    public MatchWhere ifb = new MatchWhere();
+    public MatchWhere thenb = new MatchWhere();
+
+    public Rule inheritsRule;
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

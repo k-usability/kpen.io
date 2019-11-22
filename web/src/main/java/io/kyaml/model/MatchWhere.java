@@ -4,5 +4,5 @@ import java.util.HashMap;
 
 public class MatchWhere {
     public HashMap<String,String> match = new HashMap();
-    public Constraint where;
+    public Constraint.And where = new Constraint.And();
 }

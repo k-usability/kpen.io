@@ -1,78 +1,89 @@
- rule
-    <k> {{{k}}} </k>
-    <exit-code> {{{exit-code}}} </exit-code>
-    <mode> {{{mode}}} </mode>
-    <schedule> {{{schedule}}} </schedule>
-    <analysis> {{{analysis}}} </analysis>
-    <ethereum>
-      <evm>
-        <output> {{{output}}} </output>
-        <statusCode> {{{statusCode}}} </statusCode>
-        <callStack> {{{callStack}}} </callStack>
-        <interimStates> {{{interimStates}}} </interimStates>
-        <touchedAccounts> {{{touchedAccounts}}} </touchedAccounts>
-        <callState>
-          <program> {{{program}}} </program>
-          <programBytes> {{{programBytes}}} </programBytes>
-          <id> {{{id}}} </id> // this
-          <caller> {{{caller}}} </caller>
-          <callData> {{{callData}}} </callData>
-          <callValue> {{{callValue}}} </callValue>
-          <wordStack> {{{wordStack}}} </wordStack>
-          <localMem> {{{localMem}}} </localMem>
-          <pc> {{{pc}}} </pc>
-          <gas> {{{gas}}} </gas>
-          <memoryUsed> {{{memoryUsed}}} </memoryUsed>
-          <previousGas> {{{previousGas}}} </previousGas>
-          <static> {{{static}}} </static>
-          <callDepth> {{{callDepth}}} </callDepth>
-        </callState>
-        <substate>
-          <selfDestruct> {{{selfDestruct}}} </selfDestruct>
-          <log> {{{log}}} </log>
-          <refund> {{{refund}}} </refund>
-        </substate>
-        <gasPrice> {{{gasPrice}}} </gasPrice>
-        <origin> {{{origin}}} </origin>
-        <previousHash> {{{previousHash}}} </previousHash>
-        <ommersHash> {{{ommersHash}}} </ommersHash>
-        <coinbase> {{{coinbase}}} </coinbase>
-        <stateRoot> {{{stateRoot}}} </stateRoot>
-        <transactionsRoot> {{{transactionRoot}}} </transactionsRoot>
-        <receiptsRoot> {{{receiptsRoot}}} </receiptsRoot>
-        <logsBloom> {{{logsBloom}}} </logsBloom>
-        <difficulty> {{{difficulty}}} </difficulty>
-        <number> {{{number}}} </number>
-        <gasLimit> {{{gasLimit}}} </gasLimit>
-        <gasUsed> {{{gasUsed}}} </gasUsed>
-        <timestamp> {{{timestamp}}} </timestamp>
-        <extraData> {{{extraData}}} </extraData>
-        <mixHash> {{{mixHash}}} </mixHash>
-        <blockNonce> {{{blockNonce}}} </blockNonce>
-        <ommerBlockHeaders> {{{ommerBlockHeaders}}} </ommerBlockHeaders>
-        <blockhash> {{{blockhash}}} </blockhash>
-      </evm>
-      <network>
-        <activeAccounts> {{{activeAccounts}}} </activeAccounts>
-        <accounts>
-          {{#each account}}
-          <account>
-            <acctID> {{{acctID}}} </acctID>
-            <balance> {{{balance}}} </balance>
-            <code> {{{code}}} </code>
-            <storage> {{{storage}}} </storage>
-            <origStorage> {{{origStorage}}} </origStorage>
-            <nonce> {{{nonce}}} </nonce>
-          </account>
-          {{/each}}
-            ...
-        </accounts>
-        <txOrder> {{{txOrder}}} </txOrder>
-        <txPending> {{{txPending}}} </txPending>
-        <messages> {{{messages}}} </messages>
-      </network>
-    </ethereum>
-    requires
-    {{{requires}}}
-    ensures
-    {{{ensures}}}
+requires "abstract-semantics.k"
+requires "verification.k"
+
+module {{{rule-name}}}
+imports ETHEREUM-SIMULATION
+imports ABSTRACT-SEMANTICS
+imports VERIFICATION
+
+
+    rule
+        <k> {{{k}}} </k>
+        <exit-code> {{{exit-code}}} </exit-code>
+        <mode> {{{mode}}} </mode>
+        <schedule> {{{schedule}}} </schedule>
+        <analysis> {{{analysis}}} </analysis>
+        <ethereum>
+          <evm>
+            <output> {{{output}}} </output>
+            <statusCode> {{{statusCode}}} </statusCode>
+            <callStack> {{{callStack}}} </callStack>
+            <interimStates> {{{interimStates}}} </interimStates>
+            <touchedAccounts> {{{touchedAccounts}}} </touchedAccounts>
+            <callState>
+              <program> {{{program}}} </program>
+              <programBytes> {{{programBytes}}} </programBytes>
+              <id> {{{id}}} </id> // this
+              <caller> {{{caller}}} </caller>
+              <callData> {{{callData}}} </callData>
+              <callValue> {{{callValue}}} </callValue>
+              <wordStack> {{{wordStack}}} </wordStack>
+              <localMem> {{{localMem}}} </localMem>
+              <pc> {{{pc}}} </pc>
+              <gas> {{{gas}}} </gas>
+              <memoryUsed> {{{memoryUsed}}} </memoryUsed>
+              <previousGas> {{{previousGas}}} </previousGas>
+              <static> {{{static}}} </static>
+              <callDepth> {{{callDepth}}} </callDepth>
+            </callState>
+            <substate>
+              <selfDestruct> {{{selfDestruct}}} </selfDestruct>
+              <log> {{{[log]}}} </log>
+              <refund> {{{refund}}} </refund>
+            </substate>
+            <gasPrice> {{{gasPrice}}} </gasPrice>
+            <origin> {{{origin}}} </origin>
+            <previousHash> {{{previousHash}}} </previousHash>
+            <ommersHash> {{{ommersHash}}} </ommersHash>
+            <coinbase> {{{coinbase}}} </coinbase>
+            <stateRoot> {{{stateRoot}}} </stateRoot>
+            <transactionsRoot> {{{transactionRoot}}} </transactionsRoot>
+            <receiptsRoot> {{{receiptsRoot}}} </receiptsRoot>
+            <logsBloom> {{{logsBloom}}} </logsBloom>
+            <difficulty> {{{difficulty}}} </difficulty>
+            <number> {{{number}}} </number>
+            <gasLimit> {{{gasLimit}}} </gasLimit>
+            <gasUsed> {{{gasUsed}}} </gasUsed>
+            <timestamp> {{{timestamp}}} </timestamp>
+            <extraData> {{{extraData}}} </extraData>
+            <mixHash> {{{mixHash}}} </mixHash>
+            <blockNonce> {{{blockNonce}}} </blockNonce>
+            <ommerBlockHeaders> {{{ommerBlockHeaders}}} </ommerBlockHeaders>
+            <blockhash> {{{blockhash}}} </blockhash>
+          </evm>
+          <network>
+            <activeAccounts> {{{activeAccounts}}} </activeAccounts>
+            <accounts>
+              {{#each account}}
+              <account>
+                <acctID> {{{acctID}}} </acctID>
+                <balance> {{{balance}}} </balance>
+                <code> {{{code}}} </code>
+                <storage> {{{storage}}} </storage>
+                <origStorage> {{{origStorage}}} </origStorage>
+                <nonce> {{{nonce}}} </nonce>
+              </account>
+              {{/each}}
+                ...
+            </accounts>
+            <txOrder> {{{txOrder}}} </txOrder>
+            <txPending> {{{txPending}}} </txPending>
+            <messages> {{{messages}}} </messages>
+          </network>
+        </ethereum>
+        requires
+        {{{requires}}}
+        ensures
+        {{{ensures}}}
+
+endmodule

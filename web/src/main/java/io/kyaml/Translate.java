@@ -9,10 +9,10 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.*;
 
 public class Translate {
-    private KYaml ky;
+    private Rule rule;
 
-    public Translate(KYaml kyaml) {
-        this.ky = kyaml;
+    public Translate(Rule rule) {
+        this.rule = rule;
     }
 
     public Object clean(Object o) {
@@ -38,41 +38,30 @@ public class Translate {
         }
     }
 
-    public List<KRule> toKRules() {
-        List<KRule> res = new ArrayList();
-        for (Rule r : ky.rules) {
-            KRule k = new KRule();
-            if (r.ifb != null) {
-                if (r.ifb.match != null) {
-                    for (Map.Entry<String, String> e : r.ifb.match.entrySet()) {
-                        k.cells.put(e.getKey(), clean(e.getValue()));
-                    }
-                }
-
-                k.cells.put("requires", clean(toKConstraint(r.ifb.where, "")));
-            }
-
-            if (r.thenb != null) {
-                if (r.thenb.match != null) {
-                    for (Map.Entry<String, String> e : r.thenb.match.entrySet()) {
-                        String cell = e.getKey();
-                        Object value = clean(e.getValue());
-
-                        if (k.cells.containsKey(cell)) {
-                            Object ifvalue = k.cells.get(cell);
-                            k.cells.put(cell, ifvalue + " => " + value);
-                        } else {
-                            k.cells.put(cell, "_ => " + value);
-                        }
-                    }
-                }
-
-                k.cells.put("ensures", clean(toKConstraint(r.thenb.where, "")));
-            }
-
-            res.add(k);
+    public KRule toKRule() {
+        KRule k = new KRule();
+        k.cells.put("rule-name", rule.name.toUpperCase());
+        for (Map.Entry<String, String> e : rule.ifb.match.entrySet()) {
+            k.cells.put(e.getKey(), clean(e.getValue()));
         }
-        return res;
+
+        k.cells.put("requires", clean(toKConstraint(rule.ifb.where, "")));
+
+        for (Map.Entry<String, String> e : rule.thenb.match.entrySet()) {
+            String cell = e.getKey();
+            Object value = clean(e.getValue());
+
+            if (k.cells.containsKey(cell)) {
+                Object ifvalue = k.cells.get(cell);
+                k.cells.put(cell, ifvalue + " => " + value);
+            } else {
+                k.cells.put(cell, "_ => " + value);
+            }
+        }
+
+        k.cells.put("ensures", clean(toKConstraint(rule.thenb.where, "")));
+
+        return k;
     }
 
     public String toKConstraint(Constraint c, String tabs) {
@@ -86,8 +75,10 @@ public class Translate {
             if (a.and.isEmpty()) {
                 return "true";
             }
+            boolean first = true;
             for (Constraint ac : a.and) {
-                l.add(tabs + "andBool " + toKConstraint(ac, tabs));
+                l.add(tabs + (first ? "" : "andBool ") + toKConstraint(ac, tabs));
+                first = false;
             }
             return "(" + StringUtils.join(l, "\n") + ")";
         } else if (c instanceof Constraint.Or) {
@@ -96,14 +87,16 @@ public class Translate {
             if (a.or.isEmpty()) {
                 return "false";
             }
+            boolean first = true;
             for (Constraint oc : a.or) {
-                l.add(tabs + "orBool " + toKConstraint(oc, tabs));
+                l.add(tabs + (first ? "" : "orBool ")  + toKConstraint(oc, tabs));
+                first = false;
             }
             return "(" + StringUtils.join(l, "\n") + ")";
         } else if (c instanceof Constraint.Not) {
             Constraint.Not n = (Constraint.Not) c;
             String value = "notBool " + toKConstraint(n.not, tabs);
-            return "(" + value + ")";
+            return value;
         } else if (c instanceof Constraint.Predicate) {
             Constraint.Predicate p = (Constraint.Predicate) c;
             return clean(p.predicate).toString();

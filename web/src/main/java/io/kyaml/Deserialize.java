@@ -67,7 +67,7 @@ public class Deserialize {
         return mw;
     }
 
-    public static Constraint toWhereList(List l) {
+    public static Constraint.And toWhereList(List l) {
         Constraint.And and = new Constraint.And();
         if (l == null) return and;
 
@@ -106,7 +106,8 @@ public class Deserialize {
 
     private static LinkedHashMap getMap(Object o, String key) {
         LinkedHashMap<String,Object> m = (LinkedHashMap) o;
-        return (LinkedHashMap) m.get(key);
+        LinkedHashMap r = (LinkedHashMap) m.get(key);
+        return r == null ? new LinkedHashMap() : r;
     }
 
     private static List getList(Object o, String key) {

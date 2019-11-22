@@ -47,7 +47,7 @@ spec:
           gasLimit: _
           gasUsed: _
           timestamp: NOW
-          extractData: _
+          extraData: _
           mixHash: _
           blockNonce: _
           ommerBlockHeaders: _
@@ -89,7 +89,7 @@ spec:
           - \#rangeAddress(MSG_SENDER)
       then:
         match:
-          k: \\#halt ~> _
+          k: \#halt ~> _
           output: _
           statusCode: _
           touchedAccounts: _
