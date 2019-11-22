@@ -3,6 +3,7 @@ spec:
       name: root
       macro:
         compiler: "Solidity"
+        code:
       if:
         match:
           k: \#execute ~> _

@@ -55,7 +55,7 @@
       <network>
         <activeAccounts> {{{activeAccounts}}} </activeAccounts>
         <accounts>
-          {{#each accounts}}
+          {{#each account}}
           <account>
             <acctID> {{{acctID}}} </acctID>
             <balance> {{{balance}}} </balance>
@@ -72,11 +72,7 @@
         <messages> {{{messages}}} </messages>
       </network>
     </ethereum>
-    requires true
-    {{#each requires}}
-      andBool {{{constraint}}}
-    {{/each}}
-    ensures true
-    {{#each ensures}}
-      andBool {{{constraint}}}
-    {{/each}}
+    requires
+    {{{requires}}}
+    ensures
+    {{{ensures}}}

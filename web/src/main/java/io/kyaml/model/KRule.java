@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class KRule {
-    public HashMap<String,String> cells = new HashMap();
+    public HashMap<String,Object> cells = new HashMap();
 
 
 }
