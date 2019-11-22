@@ -7,6 +7,7 @@ import io.kpen.jooq.tables.records.ProjectRecord;
 import io.kpen.util.Auth;
 import io.kpen.util.S3;
 import io.kpen.util.Tx;
+import io.kyaml.KRuleGenerator;
 import lombok.Data;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
@@ -36,10 +37,8 @@ import static org.apache.commons.io.FileUtils.copyFileToDirectory;
 @RequestMapping(path = "api", produces = MediaType.APPLICATION_JSON_VALUE)
 public class NewProjectController {
     public static final String KTMPL_DIR = "data/ktmpl";
-    public static final String SPEC_MIN_INI_TOKEN = "%SPEC.MIN.INI%";
     public static final String PROGRAM_FILE_NAME = "program.sol";
-    public static final String SPEC_MIN_FILE_NAME = "spec.min.ini";
-    public static final String SPEC_FULL_FILE_NAME = "spec.ini";
+    public static final String SPEC_FILE_NAME = "spec.yaml";
 
     @PostMapping(value = "/project")
     public NewProjectResp newProject(Authentication authentication, @RequestBody final NewProjectReq req) throws Throwable {
@@ -61,8 +60,7 @@ public class NewProjectController {
         File generatedDir = new File(codePath + "/generated");
         File resourcesDir = new File(spacePath + "/resources");
         File programFile = new File(codePath + "/" + PROGRAM_FILE_NAME);
-        File specMinFile = new File(codePath + "/" + SPEC_MIN_FILE_NAME);
-        File specFullFile = new File(codePath + "/" + SPEC_FULL_FILE_NAME);
+        File specYamlFile = new File(codePath + "/" + SPEC_FILE_NAME);
 
         generatedDir.mkdir();
 
@@ -76,7 +74,7 @@ public class NewProjectController {
         FileUtils.write(programFile, req.getProgramText(), Charset.defaultCharset());
         CompilationResult compilationResult = getBytecode(programFile, generatedDir);
 
-        FileUtils.write(specMinFile, req.getSpecText(), Charset.defaultCharset());
+        FileUtils.write(specYamlFile, req.getSpecText(), Charset.defaultCharset());
 
 
         for (String libk : new String[]{
@@ -93,49 +91,19 @@ public class NewProjectController {
             copyFileToDirectory(libf, generatedDir);
         }
 
-        String specsetTmpl = FileUtils.readFileToString(new File(ktmplDir + "/resources/specset-tmpl.ini"), Charset.defaultCharset());
-        String specFull = specsetTmpl.replaceAll(SPEC_MIN_INI_TOKEN, req.getSpecText());
-        if (compilationResult.isSuccess()) {
-            specFull = specFull.replaceAll("contract_code:", "contract_code: \"" + compilationResult.getBytecodeHex() + "\"");
-        }
-        FileUtils.write(specFullFile, specFull, Charset.defaultCharset());
+        File rootFileYaml = new File(KTMPL_DIR + "/resources/root.yaml");
+        File kruleTemplateFile = new File(KTMPL_DIR + "/resources/evm-spec-tmpl-yaml.k.hbs");
 
-        String genpyPath = getFile(resourcesDir, "gen-spec.py").getAbsolutePath();
-        String moduleTmpl = getFile(resourcesDir, "module-tmpl.k").getAbsolutePath();
-        String specTmpl = getFile(resourcesDir, "spec-tmpl.k").getAbsolutePath();
+        KRuleGenerator gen = new KRuleGenerator()
+                .setRootYamlFile(rootFileYaml)
+                .setOutputDir(generatedDir)
+                .setSpecYamlFile(specYamlFile)
+                .setKRuleTemplateFile(kruleTemplateFile)
+                .addProperty("{CODE}", "\"" + compilationResult.getBytecodeHex() + "\"");
 
-        if (compilationResult.isSuccess()) {
-            Ini ini = Ini.parse(specFull);
-            for (Ini.Section section : ini.getLeaves()) {
-                String[] cmd = new String[]{
-                        dotenv.get("APP_PY3"),
-                        genpyPath,
-                        moduleTmpl,
-                        specTmpl,
-                        specFullFile.getAbsolutePath(),
-                        section.getName(),
-                        section.getName()
-                };
-                String cmdstr = StringUtils.join(cmd, " ");
-                //cmdstr = "/usr/bin/python3 -h";
-                System.out.println(cmdstr);
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                ByteArrayOutputStream errorStream = new ByteArrayOutputStream();
-                CommandLine cmdLine = CommandLine.parse(cmdstr);
-                DefaultExecutor executor = new DefaultExecutor();
-                executor.setWorkingDirectory(new File(codePath));
-                executor.setStreamHandler(new PumpStreamHandler(outputStream, errorStream));
-                int exitValue = executor.execute(cmdLine);
-                if (exitValue != 0) {
-                    throw new RuntimeException("Spec generation failed");
-                }
-                String kFilename = section.getName() + "-spec.k";
-                File kFile = getFile(generatedDir, kFilename);
-                String speck = outputStream.toString();
-                System.out.println("Writing to K file: " + kFile.getAbsolutePath());
-                FileUtils.writeStringToFile(kFile, speck, Charset.defaultCharset());
-            }
-        }
+        List<File> kruleFiles = gen.run();
+        System.out.println(StringUtils.join(kruleFiles, "\n"));
+
 
         PersonRecord person = ctx.fetchOne(PERSON, PERSON.AUTH0_SUB.eq(user.getSub()));
         if (person == null) {
@@ -159,7 +127,7 @@ public class NewProjectController {
                 .setS3Bucket(bucketName)
                 .setS3Key(bucketKey)
                 .setProgramFilename(PROGRAM_FILE_NAME)
-                .setSpecFilename(SPEC_MIN_FILE_NAME)
+                .setSpecFilename(SPEC_FILE_NAME)
                 .setIsCompilationError(!compilationResult.isSuccess())
                 .setCompilationErrorMessage(compilationResult.getErrorMessage())
                 .setUserId(person.getId());

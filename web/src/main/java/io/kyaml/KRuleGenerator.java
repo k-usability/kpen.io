@@ -113,6 +113,7 @@ public class KRuleGenerator {
             } else {
                 current.name = leaf.name;
             }
+            current.name += "-spec";
             finalRules.add(current);
 
             List<Rule> path = new ArrayList();

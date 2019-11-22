@@ -1,15 +1,19 @@
-apiVersion: batch/v1
-kind: Job
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: worker
+  name: kworker-deployment
 spec:
-  parallelism: 2
+  replicas: 3
+  selector:
+    matchLabels:
+      app: kworker-pod
   template:
     metadata:
-      name: worker
+      labels:
+        app: kworker-pod
     spec:
       containers:
-        - name: c
+        - name: kworker-app
           image: 472805539381.dkr.ecr.us-east-2.amazonaws.com/kpen-io:latest
           command: ["/usr/app/worker.sh"]
           imagePullPolicy: Always
@@ -18,4 +22,3 @@ spec:
               memory: "3G"
             limits:
               memory: "3G"
-      restartPolicy: OnFailure

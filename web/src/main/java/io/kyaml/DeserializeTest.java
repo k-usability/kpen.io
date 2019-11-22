@@ -33,11 +33,4 @@ public class DeserializeTest {
         List<File> kruleFiles = gen.run();
         System.out.println(StringUtils.join(kruleFiles, "\n"));
     }
-
-    public static void overwriteWith(Rule current, Rule element) {
-        current.ifb.match.putAll(element.ifb.match);
-        current.ifb.where.and.addAll(element.ifb.where.and);
-        current.thenb.match.putAll(element.thenb.match);
-        current.thenb.where.and.addAll(element.thenb.where.and);
-    }
 }
