@@ -42,25 +42,33 @@ public class Translate {
         List<KRule> res = new ArrayList();
         for (Rule r : ky.rules) {
             KRule k = new KRule();
-            for (Map.Entry<String,String> e : r.ifb.match.entrySet()) {
-                k.cells.put(e.getKey(), clean(e.getValue()));
-            }
-
-            k.cells.put("requires", clean(toKConstraint(r.ifb.where, "")));
-
-            for (Map.Entry<String,String> e : r.thenb.match.entrySet()) {
-                String cell = e.getKey();
-                Object value = clean(e.getValue());
-
-                if (k.cells.containsKey(cell)) {
-                    Object ifvalue = k.cells.get(cell);
-                    k.cells.put(cell, ifvalue + " => " + value);
-                } else {
-                    k.cells.put(cell, "_ => " + value);
+            if (r.ifb != null) {
+                if (r.ifb.match != null) {
+                    for (Map.Entry<String, String> e : r.ifb.match.entrySet()) {
+                        k.cells.put(e.getKey(), clean(e.getValue()));
+                    }
                 }
+
+                k.cells.put("requires", clean(toKConstraint(r.ifb.where, "")));
             }
 
-            k.cells.put("ensures", clean(toKConstraint(r.thenb.where, "")));
+            if (r.thenb != null) {
+                if (r.thenb.match != null) {
+                    for (Map.Entry<String, String> e : r.thenb.match.entrySet()) {
+                        String cell = e.getKey();
+                        Object value = clean(e.getValue());
+
+                        if (k.cells.containsKey(cell)) {
+                            Object ifvalue = k.cells.get(cell);
+                            k.cells.put(cell, ifvalue + " => " + value);
+                        } else {
+                            k.cells.put(cell, "_ => " + value);
+                        }
+                    }
+                }
+
+                k.cells.put("ensures", clean(toKConstraint(r.thenb.where, "")));
+            }
 
             res.add(k);
         }
@@ -68,6 +76,9 @@ public class Translate {
     }
 
     public String toKConstraint(Constraint c, String tabs) {
+        if (c == null) {
+            return "true";
+        }
         tabs += "\t";
         if (c instanceof Constraint.And) {
             List<String> l = new ArrayList();
@@ -97,7 +108,7 @@ public class Translate {
             Constraint.Predicate p = (Constraint.Predicate) c;
             return clean(p.predicate).toString();
         } else {
-            throw new RuntimeException();
+            throw new RuntimeException("Cannot handle: " + c);
         }
     }
 }
