@@ -64,7 +64,6 @@ public class Translate {
 
             res.add(k);
         }
-
         return res;
     }
 
