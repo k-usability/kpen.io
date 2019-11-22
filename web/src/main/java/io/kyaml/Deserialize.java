@@ -7,10 +7,7 @@ import io.kyaml.model.KYaml;
 import io.kyaml.model.Rule;
 import org.yaml.snakeyaml.Yaml;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Deserialize {
     private String specstr;

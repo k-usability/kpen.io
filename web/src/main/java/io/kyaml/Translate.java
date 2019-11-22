@@ -10,14 +10,24 @@ import java.util.*;
 
 public class Translate {
     private Rule rule;
+    private HashMap<String,String> properties = new HashMap();
 
     public Translate(Rule rule) {
         this.rule = rule;
     }
 
+    public Translate addProperties(Map<String,String> properties) {
+        this.properties.putAll(properties);
+        return this;
+    }
+
     public Object clean(Object o) {
         if (o instanceof String) {
-            return ((String) o).replaceAll("\\\\#", "#");
+            String res = ((String) o).replaceAll("\\\\#", "#");
+            for (String key : properties.keySet()) {
+                res = res.replace(key, properties.get(key));
+            }
+            return res;
         } else if (o instanceof List) {
             ArrayList l = new ArrayList();
             for (Object e : (List) o) {

@@ -22,6 +22,12 @@ public class KRuleGenerator {
     private File specFile;
     private File outputDir;
     private File kruleTemplateFile;
+    private HashMap<String,String> properties = new HashMap();
+
+    public KRuleGenerator addProperty(String key, String value) {
+        properties.put(key, value);
+        return this;
+    }
 
     public KRuleGenerator setRootYamlFile(File rootFile) {
         this.rootFile = rootFile;
@@ -50,7 +56,8 @@ public class KRuleGenerator {
             System.out.println("Root invalid spec: " + errors);
             throw new IllegalArgumentException(StringUtils.join(errors, "\n"));
         }
-        KYaml rootKYaml = new Deserialize(rootSpecStr).run();
+        KYaml rootKYaml = new Deserialize(rootSpecStr)
+                .run();
 
         String progSpecStr = FileUtils.readFileToString(specFile, Charset.defaultCharset());
         errors = Validate.validate(progSpecStr);
@@ -58,7 +65,8 @@ public class KRuleGenerator {
             System.out.println("Spec invalid: " + errors);
             throw new IllegalArgumentException(StringUtils.join(errors, "\n"));
         }
-        KYaml mainkyaml = new Deserialize(progSpecStr).run();
+        KYaml mainkyaml = new Deserialize(progSpecStr)
+                .run();
 
         Rule root = rootKYaml.rules.get(0);
         {
@@ -125,7 +133,9 @@ public class KRuleGenerator {
 
         List<File> kruleFiles = new ArrayList();
         for (Rule r : finalRules) {
-            KRule kr = new Translate(r).toKRule();
+            KRule kr = new Translate(r)
+                    .addProperties(properties)
+                    .toKRule();
             String s = template.apply(kr.cells);
             File outFile = new File(outputDir.getAbsolutePath() + "/" + r.name + ".k");
             FileUtils.writeStringToFile(outFile, s, Charset.defaultCharset());
