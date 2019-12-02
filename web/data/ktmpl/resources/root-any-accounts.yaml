@@ -1,30 +1,33 @@
-specification:
+spec:
   - rule:
       name: root
+      macro:
+        compiler: "Solidity"
+        code:
       if:
         match:
-          k: (\#execute => \\#halt) ~> _
+          k: \#execute ~> _
           exit-code: 1
           mode: NORMAL
           schedule: BYZANTIUM
           analysis: .Map
-          output: _ => _
-          statusCode: _ => _
+          output: _
+          statusCode: _
           callStack: _
           interimStates: _
-          touchedAccounts: _ => _
+          touchedAccounts: _
           program: \#asMapOpCodes(\#dasmOpCodes(\#parseByteStack({CODE}), BYZANTIUM))
           programBytes: \#parseByteStack({CODE})
           id: \#CONTRACT_ID
           caller: MSG_SENDER
           callData: _
           callValue: 0
-          wordStack: .WordStack => _
-          localMem: .Map => _
-          pc: 0 => _
-          gas: \#gas(INITGAS, 0, 0) => _
-          memoryUsed: 0 => _
-          previousGas: _ => _
+          wordStack: .WordStack
+          localMem: .Map
+          pc: 0
+          gas: \#gas(INITGAS, 0, 0)
+          memoryUsed: 0
+          previousGas: _
           static: false
           callDepth: CD
           selfDestruct: _
@@ -34,17 +37,17 @@ specification:
           origin: _
           previousHash: _
           ommersHash: _
-          coinbase: _ => _
+          coinbase: _
           stateRoot: _
           transactionRoot: _
           receiptsRoot: _
           logsBloom: _
           difficulty: _
-          number: BLOCK_HUM
+          number: BLOCK_NUM
           gasLimit: _
           gasUsed: _
           timestamp: NOW
-          extractData: _
+          extraData: _
           mixHash: _
           blockNonce: _
           ommerBlockHeaders: _
@@ -53,7 +56,7 @@ specification:
           account:
             - acctID: \#CONTRACT_ID
               balance: _
-              code: _
+              code: \#parseByteStack({CODE})
               storage: _
               origStorage: _
               nonce: _
@@ -74,11 +77,27 @@ specification:
           messages: _
         where:
           - \#rangeAddress(\#CONTRACT_ID)
+          - \#rangeAddress(\#CALLEE_ID)
           - \#rangeUInt(256, NOW)
           - \#rangeUInt(128, BLOCK_NUM)
           - \#CONTRACT_ID  >Int 0
           - not: \#CONTRACT_ID  in \#precompiledAccounts(BYZANTIUM)
           - \#CALLEE_ID  >Int 0
           - not: \#CALLEE_ID  in \#precompiledAccounts(BYZANTIUM)
+          - \#rangeUInt(256, CONTRACT_BAL)
+          - \#rangeUInt(256, CALLEE_BAL)
+          - \#range(0 <= CD < 1024)
+          - \#rangeAddress(MSG_SENDER)
       then:
         match:
+          k: \#halt ~> _
+          output: _
+          statusCode: _
+          touchedAccounts: _
+          wordStack: _
+          localMem: _
+          pc: _
+          gas: _
+          memoryUsed: _
+          previousGas: _
+          coinbase: _

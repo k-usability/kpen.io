@@ -52,26 +52,21 @@ spec:
           blockNonce: _
           ommerBlockHeaders: _
           blockhash: BLOCK_HASHES
-          activeAccounts: SetItem(\#CONTRACT_ID) SetItem(\#CALLEE_ID) SetItem(1) _:Set
-          account:
-            - acctID: \#CONTRACT_ID
-              balance: _
-              code: \#parseByteStack({CODE})
-              storage: _
-              origStorage: _
-              nonce: _
-            - acctID: \#CALLEE_ID
-              balance: _
-              code: _
-              storage: _
-              origStorage: _
-              nonce: _
-            - acctID: 1
-              balance: 0
-              code: .WordStack
-              storage: .Map
-              origStorage: .Map
-              nonce: 0
+
+          acctID: \#CONTRACT_ID
+          balance: _
+          code: \#parseByteStack({CODE})
+          storage: _
+          origStorage: _
+          nonce: _
+
+          calleeAcctID: \#CALLEE_ID
+          calleeBalance: _
+          calleeCode: _
+          calleeStorage: _
+          calleeOrigStorage: _
+          calleeNonce: _
+
           txOrder: _
           txPending: _
           messages: _

@@ -62,35 +62,19 @@ imports VERIFICATION
             <blockhash> {{{blockhash}}} </blockhash>
           </evm>
           <network>
-            <activeAccounts> SetItem(#CONTRACT_ID) SetItem(#CALLEE_ID) SetItem(1) _:Set </activeAccounts>
+            <activeAccounts> {{{activeAccounts}}} </activeAccounts>
             <accounts>
+              {{#each account}}
               <account>
-                <acctID> #CONTRACT_ID </acctID>
-                <balance> _ </balance>
-                <code> #parseByteStack({CODE}) </code>
-                <storage> _ </storage>
-                <origStorage> _ </origStorage>
-                <nonce> _ </nonce>
+                <acctID> {{{acctID}}} </acctID>
+                <balance> {{{balance}}} </balance>
+                <code> {{{code}}} </code>
+                <storage> {{{storage}}} </storage>
+                <origStorage> {{{origStorage}}} </origStorage>
+                <nonce> {{{nonce}}} </nonce>
               </account>
-
-              <account>
-                <acctID> #CALLEE_ID </acctID>
-                <balance> {{{calleeBalance}}} </balance>
-                <code> {{{calleeCode}}} </code>
-                <storage> {{{calleeStorage}}} </storage>
-                <origStorage> {{{calleeOrigStorage}}} </origStorage>
-                <nonce> {{{calleeNonce}}} </nonce>
-              </account>
-
-              <account>
-                <acctID> 1 </acctID>
-                <balance> 0 </balance>
-                <code> .WordStack </code>
-                <storage> .Map </storage>
-                <origStorage> .Map </origStorage>
-                <nonce> 0 </nonce>
-              </account>
-              ...
+              {{/each}}
+                ...
             </accounts>
             <txOrder> {{{txOrder}}} </txOrder>
             <txPending> {{{txPending}}} </txPending>
