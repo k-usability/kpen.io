@@ -25,7 +25,7 @@ public class Translate {
         if (o instanceof String) {
             String res = ((String) o).replaceAll("\\\\#", "#");
             for (String key : properties.keySet()) {
-                res = res.replace(key, properties.get(key));
+                res = res.replace("{{{" + key + "}}}", properties.get(key));
             }
             return res;
         } else if (o instanceof List) {

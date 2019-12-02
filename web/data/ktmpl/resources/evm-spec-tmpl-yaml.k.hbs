@@ -67,10 +67,10 @@ imports VERIFICATION
               <account>
                 <acctID> #CONTRACT_ID </acctID>
                 <balance> _ </balance>
-                <code> #parseByteStack({CODE}) </code>
-                <storage> _ </storage>
-                <origStorage> _ </origStorage>
-                <nonce> _ </nonce>
+                <code> #parseByteStack({{{contractCode}}}) </code>
+                <storage> {{{storage}}} </storage>
+                <origStorage> {{{origStorage}}} </origStorage>
+                <nonce> {{{nonce}}} </nonce>
               </account>
 
               <account>

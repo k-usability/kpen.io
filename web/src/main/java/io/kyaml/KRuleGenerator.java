@@ -137,7 +137,12 @@ public class KRuleGenerator {
             KRule kr = new Translate(r)
                     .addProperties(properties)
                     .toKRule();
-            String s = template.apply(kr.cells);
+
+            HashMap<String,Object> kvmap = new HashMap();
+            kvmap.putAll(properties);
+            kvmap.putAll(kr.cells);
+            System.out.println(kvmap);
+            String s = template.apply(kvmap);
             File outFile = new File(outputDir.getAbsolutePath() + "/" + r.name + ".k");
             FileUtils.writeStringToFile(outFile, s, Charset.defaultCharset());
             kruleFiles.add(outFile);

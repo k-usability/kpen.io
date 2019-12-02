@@ -99,7 +99,7 @@ public class NewProjectController {
                 .setOutputDir(generatedDir)
                 .setSpecYamlFile(specYamlFile)
                 .setKRuleTemplateFile(kruleTemplateFile)
-                .addProperty("{CODE}", "\"" + compilationResult.getBytecodeHex() + "\"");
+                .addProperty("contractCode", "\"" + compilationResult.getBytecodeHex() + "\"");
 
         List<File> kruleFiles = gen.run();
         System.out.println(StringUtils.join(kruleFiles, "\n"));

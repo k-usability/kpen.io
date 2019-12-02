@@ -1,9 +1,6 @@
 spec:
   - rule:
       name: root
-      macro:
-        compiler: "Solidity"
-        code:
       if:
         match:
           k: \#execute ~> _
@@ -16,8 +13,8 @@ spec:
           callStack: _
           interimStates: _
           touchedAccounts: _
-          program: \#asMapOpCodes(\#dasmOpCodes(\#parseByteStack({CODE}), BYZANTIUM))
-          programBytes: \#parseByteStack({CODE})
+          program: \#asMapOpCodes(\#dasmOpCodes(\#parseByteStack({{{contractCode}}}), BYZANTIUM))
+          programBytes: \#parseByteStack({{{contractCode}}})
           id: \#CONTRACT_ID
           caller: MSG_SENDER
           callData: _
@@ -55,7 +52,7 @@ spec:
 
           acctID: \#CONTRACT_ID
           balance: _
-          code: \#parseByteStack({CODE})
+          code: \#parseByteStack({{{contractCode}}})
           storage: _
           origStorage: _
           nonce: _
