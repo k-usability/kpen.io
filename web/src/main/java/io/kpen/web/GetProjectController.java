@@ -161,6 +161,7 @@ public class GetProjectController {
         view.statusCode = Objects.toString(r.getStatusCode());
         view.outUrl = r.getOutputLogS3Key() == null ? null : S3.getUrl(r.getS3Bucket(), r.getOutputLogS3Key());
         view.errUrl = r.getErrorLogS3Key() == null ? null : S3.getUrl(r.getS3Bucket(), r.getErrorLogS3Key());
+        view.kUrl = S3.getUrl(r.getS3Bucket(), r.getS3Key() + "/generated/" + r.getSpecFilename());
 
         if (r.getProjectId() != null) {
             view.projectUrl = "/project/" + r.getProjectId();
@@ -216,6 +217,7 @@ public class GetProjectController {
         public String statusCode;
         public String outUrl;
         public String errUrl;
+        public String kUrl;
         public String result;
         public String resultColor;
         public String resultStyle;

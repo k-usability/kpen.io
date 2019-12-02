@@ -127,7 +127,7 @@ const SubmittedProject = ({ match, history }) => {
                                         {
                                             project.jobs.map( (job, i) => (
                                                 <TableRow key={i}>
-                                                    <TableCell>{job.specName}</TableCell>
+                                                    <TableCell><a href={job.kUrl}>{job.specName}</a></TableCell>
                                                     <TableCell>{job.requestDt}</TableCell>
                                                     <TableCell className={job.resultStyle}>{job.result}</TableCell>
                                                     <TableCell><a href={job.outUrl}>stdout</a></TableCell>
