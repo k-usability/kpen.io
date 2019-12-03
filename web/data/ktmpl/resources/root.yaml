@@ -51,14 +51,14 @@ spec:
           blockhash: BLOCK_HASHES
 
           acctID: \#CONTRACT_ID
-          balance: _
+          balance: CONTRACT_BALANCE
           code: \#parseByteStack({{{contractCode}}})
           storage: _
           origStorage: _
           nonce: _
 
           calleeAcctID: \#CALLEE_ID
-          calleeBalance: _
+          calleeBalance: CALLEE_BALANCE
           calleeCode: _
           calleeStorage: _
           calleeOrigStorage: _
@@ -70,14 +70,14 @@ spec:
         where:
           - \#rangeAddress(\#CONTRACT_ID)
           - \#rangeAddress(\#CALLEE_ID)
+          - \#rangeUInt(256, CONTRACT_BALANCE)
+          - \#rangeUInt(256, CALLEE_BALANCE)
           - \#rangeUInt(256, NOW)
           - \#rangeUInt(128, BLOCK_NUM)
           - \#CONTRACT_ID  >Int 0
           - not: \#CONTRACT_ID  in \#precompiledAccounts(BYZANTIUM)
           - \#CALLEE_ID  >Int 0
           - not: \#CALLEE_ID  in \#precompiledAccounts(BYZANTIUM)
-          - \#rangeUInt(256, CONTRACT_BAL)
-          - \#rangeUInt(256, CALLEE_BAL)
           - \#range(0 <= CD < 1024)
           - \#rangeAddress(MSG_SENDER)
       then:
