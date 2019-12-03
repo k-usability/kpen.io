@@ -3,7 +3,7 @@ spec:
       name: root
       if:
         match:
-          k: \#execute ~> _
+          k: \#execute ~> K_CELL_SUFFIX
           exit-code: 1
           mode: NORMAL
           schedule: BYZANTIUM
@@ -82,7 +82,7 @@ spec:
           - \#rangeAddress(MSG_SENDER)
       then:
         match:
-          k: \#halt ~> _
+          k: \#halt ~> K_CELL_SUFFIX
           output: _
           statusCode: _
           touchedAccounts: _
