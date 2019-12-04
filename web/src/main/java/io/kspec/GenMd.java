@@ -24,7 +24,7 @@ public class GenMd {
         outdir.mkdir();
         System.out.println("output dir: " + outdir.getAbsolutePath());
 
-        FileTemplateLoader loader = new FileTemplateLoader("src/main/resources");
+        FileTemplateLoader loader = new FileTemplateLoader("web/src/main/resources");
         loader.setSuffix(".hbs");
         Handlebars handlebars = new Handlebars(loader);
         Template template = handlebars.compile("kspec-io-md");
@@ -50,7 +50,7 @@ public class GenMd {
         outdir.mkdir();
         System.out.println("output dir: " + outdir.getAbsolutePath());
 
-        FileTemplateLoader loader = new FileTemplateLoader("src/main/resources");
+        FileTemplateLoader loader = new FileTemplateLoader("web/src/main/resources");
         loader.setSuffix(".hbs");
         Handlebars handlebars = new Handlebars(loader);
         Template template = handlebars.compile("kspec-io-md");
@@ -97,19 +97,17 @@ public class GenMd {
                     ex.setProjectId(config.kpenioprojectid);
                     ex.setExplanation(FileUtils.readFileToString(new File(expath + "/explanation.md"), Charset.defaultCharset()));
 
-                    File specYamlFile = new File(expath + "/spec.yaml");
-                    if (specYamlFile.exists()) {
-                        String specYaml = FileUtils.readFileToString(specYamlFile, Charset.defaultCharset());
-                        Object result = new Yaml().load(specYaml);
-                        System.out.println(result);
-                    }
 
-                    String spec = FileUtils.readFileToString(new File(expath + "/spec.ini"), Charset.defaultCharset());
                     String program = FileUtils.readFileToString(new File(expath + "/" + programFileName), Charset.defaultCharset());
-                    spec = "{{< highlight ini \"linenos=inline\" >}}\n" + spec + "\n{{< / highlight >}}";
                     program = "{{< highlight solidity \"linenos=inline\" >}}\n" + program + "\n{{< / highlight >}}";
 
-                    ex.setSpec(spec);
+                    File specYamlFile = new File(expath + "/spec.yaml");
+                    if (specYamlFile.exists()) {
+                        String spec = FileUtils.readFileToString(specYamlFile, Charset.defaultCharset());
+                        spec = "{{< highlight yaml \"linenos=inline\" >}}\n" + spec + "\n{{< / highlight >}}";
+                        ex.setSpec(spec);
+                    }
+
                     ex.setProgram(program);
                     if (config.kpenioprojectid != null && !config.kpenioprojectid.isEmpty()) {
                         ex.setLink("https://kpen.io/project/" + config.kpenioprojectid);
