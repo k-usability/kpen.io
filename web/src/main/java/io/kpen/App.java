@@ -1,5 +1,7 @@
 package io.kpen;
 
+import io.github.cdimascio.dotenv.Dotenv;
+import io.sentry.Sentry;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.zalando.logbook.Logbook;
@@ -15,6 +17,10 @@ public class App {
         System.setProperty("logging.level.org.apache.http", "INFO");
         System.setProperty("spring.http.log-request-details", "true");
         System.setProperty("logging.level.org.zalando.logbook", "TRACE");
+
+        Dotenv dotenv = Dotenv.load();
+
+        Sentry.init(dotenv.get("SENTRY_DSN"));
 
         SpringApplication.run(App.class, args);
     }

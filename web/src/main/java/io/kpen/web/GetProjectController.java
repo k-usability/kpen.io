@@ -65,13 +65,13 @@ public class GetProjectController {
     }
 
     @GetMapping(value = "/project")
-    public GetProjectResp getProject(@RequestParam Integer projectId) throws Throwable {
-        return Tx.runex(ctx -> getProject(ctx, projectId));
+    public GetProjectResp getProject(@RequestParam Integer projectId) {
+        return Tx.run(ctx -> getProject(ctx, projectId));
     }
 
     @PostMapping(value = "/projects")
-    public GetProjectsResp getProjects(final Authentication auth) throws Throwable {
-        return Tx.runex(ctx -> getProjects(ctx, Auth.getPersonRecord(ctx, auth)));
+    public GetProjectsResp getProjects(final Authentication auth) {
+        return Tx.run(ctx -> getProjects(ctx, Auth.getPersonRecord(ctx, auth)));
     }
 
     public static GetProjectsResp getProjects(DSLContext ctx, PersonRecord person) throws IOException {

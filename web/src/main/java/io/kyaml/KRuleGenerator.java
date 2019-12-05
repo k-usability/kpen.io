@@ -3,9 +3,11 @@ package io.kyaml;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.io.FileTemplateLoader;
+import io.kpen.web.BytecodeCompiler;
 import io.kyaml.model.KRule;
 import io.kyaml.model.KYaml;
 import io.kyaml.model.Rule;
+import lombok.Data;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -49,12 +51,21 @@ public class KRuleGenerator {
         return this;
     }
 
-    public List<File> run() throws IOException {
+    @Data
+    public static class Result {
+        private boolean success;
+        private String errorMessage;
+        private List<File> kRuleFiles;
+    }
+
+    public Result run() throws KYamlException, IOException {
         String rootSpecStr = FileUtils.readFileToString(rootFile, Charset.defaultCharset());
         List<String> errors = Validate.validate(rootSpecStr);
         if (!errors.isEmpty()) {
             System.out.println("Root invalid spec: " + errors);
-            throw new IllegalArgumentException(StringUtils.join(errors, "\n"));
+            Result res = new Result();
+            res.errorMessage = StringUtils.join(errors, " ");
+            return res;
         }
         KYaml rootKYaml = new Deserialize(rootSpecStr)
                 .run();
@@ -63,7 +74,9 @@ public class KRuleGenerator {
         errors = Validate.validate(progSpecStr);
         if (!errors.isEmpty()) {
             System.out.println("Spec invalid: " + errors);
-            throw new IllegalArgumentException(StringUtils.join(errors, "\n"));
+            Result res = new Result();
+            res.errorMessage = StringUtils.join(errors, " ");
+            return res;
         }
         KYaml mainkyaml = new Deserialize(progSpecStr)
                 .run();
@@ -148,7 +161,10 @@ public class KRuleGenerator {
             kruleFiles.add(outFile);
         }
 
-        return kruleFiles;
+        Result res = new Result();
+        res.success = true;
+        res.kRuleFiles = kruleFiles;
+        return res;
     }
 
     public static void overwriteWith(Rule current, Rule element) {

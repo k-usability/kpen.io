@@ -1,6 +1,7 @@
 package io.kpen.util;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import io.sentry.Sentry;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.jooq.Configuration;
@@ -35,8 +36,12 @@ public class Tx {
 		try {
 			return runex(ctxr);
 		} catch (RuntimeException t) {
+			System.out.println(ExceptionUtils.getStackTrace(t));
+			Sentry.capture(t);
 			throw t;
 		} catch (Throwable t) {
+			System.out.println(ExceptionUtils.getStackTrace(t));
+			Sentry.capture(t);
 			throw new RuntimeException(t);
 		}
 	}
@@ -94,7 +99,7 @@ public class Tx {
 				logger.debug("Pass time: " + passTime.getTime()/1000.0 + "s");
 			}							
 		} catch (Throwable t) {
-			logger.debug(ExceptionUtils.getStackTrace(t));			
+			logger.debug(ExceptionUtils.getStackTrace(t));
 
 			if (conn != null) {
 				try {

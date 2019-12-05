@@ -9,9 +9,6 @@ import io.kpen.util.S3;
 import io.kpen.util.Tx;
 import io.kyaml.KRuleGenerator;
 import lombok.Data;
-import org.apache.commons.exec.CommandLine;
-import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.DSLContext;
@@ -19,7 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -29,7 +25,6 @@ import java.util.*;
 
 import static io.kpen.jooq.Tables.*;
 import static io.kpen.web.BytecodeCompiler.*;
-import static org.apache.commons.io.FileUtils.copyFile;
 import static org.apache.commons.io.FileUtils.copyFileToDirectory;
 
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3010", "https://kpen.io"})
@@ -41,8 +36,8 @@ public class NewProjectController {
     public static final String SPEC_FILE_NAME = "spec.yaml";
 
     @PostMapping(value = "/project")
-    public NewProjectResp newProject(Authentication authentication, @RequestBody final NewProjectReq req) throws Throwable {
-        return Tx.runex(ctx -> newProject(ctx, req, Auth.getUser(authentication)));
+    public NewProjectResp newProject(Authentication authentication, @RequestBody final NewProjectReq req) {
+        return Tx.run(ctx -> newProject(ctx, req, Auth.getUser(authentication)));
     }
 
     public NewProjectResp newProject(DSLContext ctx, NewProjectReq req, Auth.User user) throws IOException {
@@ -101,9 +96,10 @@ public class NewProjectController {
                 .setKRuleTemplateFile(kruleTemplateFile)
                 .addProperty("contractCode", "\"" + compilationResult.getBytecodeHex() + "\"");
 
-        List<File> kruleFiles = gen.run();
-        System.out.println(StringUtils.join(kruleFiles, "\n"));
-
+        KRuleGenerator.Result kruleResult = gen.run();
+        if (kruleResult.isSuccess()) {
+            System.out.println(StringUtils.join(kruleResult.getKRuleFiles(), "\n"));
+        }
 
         PersonRecord person = ctx.fetchOne(PERSON, PERSON.AUTH0_SUB.eq(user.getSub()));
         if (person == null) {
@@ -128,9 +124,19 @@ public class NewProjectController {
                 .setS3Key(bucketKey)
                 .setProgramFilename(PROGRAM_FILE_NAME)
                 .setSpecFilename(SPEC_FILE_NAME)
-                .setIsCompilationError(!compilationResult.isSuccess())
-                .setCompilationErrorMessage(compilationResult.getErrorMessage())
                 .setUserId(person.getId());
+
+        if (!compilationResult.isSuccess()) {
+            project.setCompilationErrorMessage(compilationResult.getErrorMessage());
+            project.setIsCompilationError(true);
+        } else if (!kruleResult.isSuccess()) {
+            project.setCompilationErrorMessage(kruleResult.getErrorMessage());
+            project.setIsCompilationError(true);
+        } else {
+            project.setCompilationErrorMessage(null);
+            project.setIsCompilationError(false);
+        }
+
         project.insert();
         resp.setProjectId(project.getId());
 

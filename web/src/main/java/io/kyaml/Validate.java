@@ -18,7 +18,7 @@ public class Validate {
         try {
             Schema schema = new Schema( Validate.class.getResourceAsStream("/kyaml-schema.yml"));
             schema.validate(IOUtils.toInputStream(spec, Charset.defaultCharset()));
-        } catch(SchemaException e) {
+        } catch(Throwable e) {
             return Arrays.asList(e.getMessage());
         }
         return Collections.emptyList();

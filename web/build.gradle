@@ -44,7 +44,7 @@ dependencies {
     implementation 'com.auth0:auth0:1.14.2'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'org.projectodd:yaml-schema:0.2'
-
+    implementation 'io.sentry:sentry:1.7.27'
 
     testImplementation 'org.springframework.security:spring-security-test:5.1.5.RELEASE'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

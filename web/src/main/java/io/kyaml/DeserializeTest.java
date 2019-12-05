@@ -30,7 +30,7 @@ public class DeserializeTest {
                 .setKRuleTemplateFile(kruleTemplateFile)
                 .addProperty("{CODE}", code);
 
-        List<File> kruleFiles = gen.run();
-        System.out.println(StringUtils.join(kruleFiles, "\n"));
+        KRuleGenerator.Result result = gen.run();
+        System.out.println(StringUtils.join(result.getKRuleFiles(), "\n"));
     }
 }
