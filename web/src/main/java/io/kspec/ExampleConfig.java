@@ -6,4 +6,5 @@ import lombok.Data;
 public class ExampleConfig {
     public String description;
     public String kpenioprojectid;
+    public Boolean display;
 }

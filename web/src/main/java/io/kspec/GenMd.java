@@ -15,13 +15,13 @@ import java.util.*;
 
 public class GenMd {
     public static Collection<String> LANGUAGES = Arrays.asList("evm");
-    public static final String OUT_DIR_KSPECIO = "out-kspec.io";
+    public static final String OUT_DIR_KSPECIO = "/home/sbugrara/kspec.io/content/docs";
     public static final String KEXAMPLES_REPO = "/home/sbugrara/k-examples";
 
     public static void main(String[] args) throws IOException {
         File outdir = new File(OUT_DIR_KSPECIO);
-        outdir.delete();
-        outdir.mkdir();
+        //outdir.delete();
+        //outdir.mkdir();
         System.out.println("output dir: " + outdir.getAbsolutePath());
 
         FileTemplateLoader loader = new FileTemplateLoader("web/src/main/resources");
@@ -90,6 +90,7 @@ public class GenMd {
                     }
 
                     ExampleConfig config = yaml.load(new FileInputStream(new File(expath + "/config.yaml")));
+                    if (config.display != null && !config.display) continue;
 
                     Example ex = new Example();
                     ex.setDescription(config.description);
