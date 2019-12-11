@@ -157,7 +157,7 @@ public class GetProjectController {
         view.processingSecs = Objects.toString(getProcessingDuration(ChronoUnit.SECONDS, r));
         view.processingMins = Objects.toString(getProcessingDuration(ChronoUnit.MINUTES, r));
         view.benchmarkName = r.getBenchmarkName();
-        view.specName = r.getSpecName();
+        view.specName = r.getSpecName() + ".k";
         view.statusCode = Objects.toString(r.getStatusCode());
         view.outUrl = r.getOutputLogS3Key() == null ? null : S3.getUrl(r.getS3Bucket(), r.getOutputLogS3Key());
         view.errUrl = r.getErrorLogS3Key() == null ? null : S3.getUrl(r.getS3Bucket(), r.getErrorLogS3Key());

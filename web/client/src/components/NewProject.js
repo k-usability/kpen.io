@@ -97,13 +97,13 @@ const NewProject = ({ location, history }) => {
                     <SplitPane className="sp" defaultSize={300} split="horizontal">
                         <div className="AppEditorComponent">
                             <div className="AppSectionHeader">
-                                Program
+                                Solidity Program
                             </div>
                             <Editor language="sol" options={edopt} value={project.programText} editorDidMount={programEditorDidMount} />
                         </div>
                         <div className="AppEditorComponent">
                             <div className="AppSectionHeader">
-                                Specification
+                                K-Yaml Specification
                             </div>
                         <Editor language="yaml" options={edopt} value={project.specText} editorDidMount={specEditorDidMount} />
                         </div>

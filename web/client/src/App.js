@@ -6,6 +6,7 @@ import Loading from "./components/Loading";
 import ProjectList from "./components/ProjectList";
 import SubmittedProject from "./components/SubmittedProject";
 import NewProject from "./components/NewProject";
+import Documentation from "./components/Documentation";
 import { useAuth0 } from "./react-auth0-spa";
 import history from "./utils/history";
 import { NavLink as RouterNavLink } from "react-router-dom";
@@ -44,9 +45,10 @@ const App = () => {
             Job Queue
           </RouterNavLink>
 
-          <a href="https://kspec.io" target="_blank">
-            Examples
-          </a>
+          <RouterNavLink to="/documentation">
+            Documentation
+          </RouterNavLink>
+
           {isAuthenticated &&
             <RouterNavLink className="push-left" to="#" onClick={() => logoutWithRedirect()}>
               Log out
@@ -58,6 +60,7 @@ const App = () => {
           <Route path="/" exact component={NewProject} />
           <Route path="/new" exact component={NewProject} />
           <Route path="/project/:id" exact component={SubmittedProject} />
+          <Route path="/documentation" exact component={Documentation} />
           <PrivateRoute path="/projects" component={ProjectList} />
         </Switch>
       </div>

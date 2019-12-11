@@ -116,7 +116,7 @@ const SubmittedProject = ({ match, history }) => {
                                 <Table>
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell>Spec</TableCell>
+                                            <TableCell>K Rule</TableCell>
                                             <TableCell>Submitted</TableCell>
                                             <TableCell>Result</TableCell>
                                             <TableCell>Output</TableCell>
@@ -130,8 +130,8 @@ const SubmittedProject = ({ match, history }) => {
                                                     <TableCell><a href={job.kUrl}>{job.specName}</a></TableCell>
                                                     <TableCell>{job.requestDt}</TableCell>
                                                     <TableCell className={job.resultStyle}>{job.result}</TableCell>
-                                                    <TableCell><a href={job.outUrl}>stdout</a></TableCell>
-                                                    <TableCell><a href={job.errUrl}>stderr</a></TableCell>
+                                                    <TableCell><a href={job.outUrl}>{job.outUrl === null ? '' : 'stdout.txt'}</a></TableCell>
+                                                    <TableCell><a href={job.errUrl}>{job.errUrl === null ? '' : 'stderr.txt'}</a></TableCell>
                                                 </TableRow>
                                             ))
                                         }
