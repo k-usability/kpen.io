@@ -100,12 +100,12 @@ public class GenMd {
 
 
                     String program = FileUtils.readFileToString(new File(expath + "/" + programFileName), Charset.defaultCharset());
-                    program = "{{< highlight solidity \"linenos=inline\" >}}\n" + program + "\n{{< / highlight >}}";
+                    program = "{{< highlight solidity >}}\n" + program + "\n{{< / highlight >}}";
 
                     File specYamlFile = new File(expath + "/spec.yaml");
                     if (specYamlFile.exists()) {
                         String spec = FileUtils.readFileToString(specYamlFile, Charset.defaultCharset());
-                        spec = "{{< highlight yaml \"linenos=inline\" >}}\n" + spec + "\n{{< / highlight >}}";
+                        spec = "```\n" + spec + "\n```";
                         ex.setSpec(spec);
                     }
 

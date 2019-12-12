@@ -4,7 +4,24 @@ import {useAuth0} from "../react-auth0-spa";
 import SplitPane from "react-split-pane";
 import Editor from "@monaco-editor/react";
 
-const NewProject = ({ location, history }) => {
+var DEFAULT_PROGRAM_TEXT = "pragma solidity 0.5.0;\n" +
+    "contract simple00 {\n" +
+    "    function execute() public returns (uint) {\n" +
+    "        return 5;\n" +
+    "    }\n" +
+    "}";
+
+var DEFAULT_SPEC_TEXT = "spec:\n" +
+    "  - rule:\n" +
+    "      if:\n" +
+    "        match:\n" +
+    "          callData: \\#abiCallData(\"execute\", .TypedArgs)\n" +
+    "      then:\n" +
+    "        match:\n" +
+    "          statusCode: EVMC_SUCCESS\n" +
+    "          output: \\#encodeArgs(#uint256(5))"
+
+const NewProject = ({ location, history, showExample }) => {
     const edopt = {
         minimap: { enabled: false},
         selectOnLineNumbers: true,
@@ -13,7 +30,14 @@ const NewProject = ({ location, history }) => {
 
     console.log(process.env.REACT_APP_API_URL)
 
-    const [project, setProject] = useState({programText: '', specText: '', state: null, stateAlertType: null});
+    var initialProgramText = '';
+    var initialSpecText = '';
+    if (showExample === true) {
+        initialProgramText = DEFAULT_PROGRAM_TEXT
+        initialSpecText = DEFAULT_SPEC_TEXT
+    }
+
+    const [project, setProject] = useState({programText: initialProgramText, specText: initialSpecText, state: null, stateAlertType: null});
     const { loginWithPopup2 } = useAuth0();
 
     useEffect(() => {

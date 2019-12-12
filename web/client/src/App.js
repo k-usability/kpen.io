@@ -57,7 +57,7 @@ const App = () => {
         </div>
 
         <Switch>
-          <Route path="/" exact component={NewProject} />
+          <Route path="/" exact render={(props) => <NewProject {...props} showExample={true}/>} />
           <Route path="/new" exact component={NewProject} />
           <Route path="/project/:id" exact component={SubmittedProject} />
           <Route path="/documentation" exact component={Documentation} />
