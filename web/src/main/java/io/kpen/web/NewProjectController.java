@@ -8,6 +8,7 @@ import io.kpen.util.Auth;
 import io.kpen.util.S3;
 import io.kpen.util.Tx;
 import io.kyaml.KRuleGenerator;
+import io.sentry.Sentry;
 import lombok.Data;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -158,6 +159,10 @@ public class NewProjectController {
                     .setProjectId(project.getId());
             job.insert();
         }
+
+
+        Sentry.capture("new project: https://kpen.io/project/" + resp.projectId);
+        System.out.println("Called sentry");
 
         return resp;
     }

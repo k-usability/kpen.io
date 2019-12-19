@@ -2,7 +2,7 @@ CREATE TABLE person (
     id serial primary key,
     name text not null,
     auth0_sub text null,
-    email text not null,
+    email text null,
     is_admin boolean not null default false
 );
 

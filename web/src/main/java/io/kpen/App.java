@@ -20,6 +20,7 @@ public class App {
 
         Dotenv dotenv = Dotenv.load();
 
+        System.out.println("Initializing sentry: " + dotenv.get("SENTRY_DSN"));
         Sentry.init(dotenv.get("SENTRY_DSN"));
 
         SpringApplication.run(App.class, args);

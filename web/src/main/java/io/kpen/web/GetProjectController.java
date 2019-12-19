@@ -6,6 +6,7 @@ import io.kpen.jooq.tables.records.ProjectRecord;
 import io.kpen.util.Auth;
 import io.kpen.util.S3;
 import io.kpen.util.Tx;
+import io.sentry.Sentry;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
