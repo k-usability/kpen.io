@@ -2,4 +2,4 @@
 
 set -Eeuxo pipefail
 
-eksctl delete cluster --name=kpen
+eksctl --profile consensys delete cluster --name=kpen

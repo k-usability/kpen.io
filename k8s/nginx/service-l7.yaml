@@ -26,11 +26,11 @@ spec:
     - name: http
       port: 80
       protocol: TCP
-      targetPort: 3010
+      targetPort: http
     - name: https
       port: 443
       protocol: TCP
-      targetPort: 3010
+      targetPort: http
 
 ---
 
