@@ -13,18 +13,18 @@ fi
 
 
 if [ $1 = "web" ]; then
-  docker start -a -i `docker create -p 3010:3010  -t -i kpen-io:latest /usr/app/web.sh`
+  docker start -a -i `docker create -p 3010:3010  -t -i kpen-io:latest /home/user/web.sh`
   exit 0
 fi
 
 if [ $1 = "worker" ]; then
-  docker start -a -i `docker create  -t -i kpen-io:latest /usr/app/worker.sh`
+  docker start -a -i `docker create  -t -i kpen-io:latest /home/user/worker.sh`
   exit 0
 fi
 
 if [ $1 = "jar" ]; then
   (cd ${WEB_DIR}; ./gradlew clean bootJar)
-  docker build -t kpen-io -f Dockerfile.web .
+  docker build -t kpen-io -f Dockerfile.kpen .
   docker run -p 3010:3010 kpen-io:latest
   exit 0
 fi
@@ -34,7 +34,7 @@ rm -rf ${STATIC_DIR}
 mv ${CLIENT_DIR}/build ${STATIC_DIR}
 (cd ${WEB_DIR}; ./gradlew clean bootJar)
 
-docker build -t kpen-io -f Dockerfile.web .
+docker build -t kpen-io:latest -f Dockerfile.kpen .
 
 if [ $1 = "push" ]; then
   `aws --profile consensys ecr get-login --no-include-email --region us-east-2`
@@ -44,6 +44,6 @@ if [ $1 = "push" ]; then
 fi
 
 if [ $1 = "run" ]; then
-  docker run -p 3010:3010 kpen-io:latest
+  docker run -p 3010:3010 -it kpen-io:latest /bin/bash
   exit 0
 fi

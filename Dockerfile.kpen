@@ -1,0 +1,15 @@
+FROM ksem:latest
+
+ENV APP_FILE kpen-0.0.1.jar
+ENV APP_HOME /home/user
+WORKDIR $APP_HOME
+
+COPY web/build/libs/*.jar $APP_HOME/
+COPY web/data $APP_HOME/data
+COPY .env.production $APP_HOME/.env
+COPY .aws-credentials $APP_HOME/.aws/credentials
+COPY rds-ca-2015-root.pem $APP_HOME/.postgresql/root.crt
+COPY web.sh $APP_HOME
+COPY worker.sh $APP_HOME
+
+EXPOSE 3010

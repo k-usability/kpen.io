@@ -8,7 +8,6 @@ module ABSTRACT-SEMANTICS
   imports ECREC-SYMBOLIC
   imports EVM
 
-
   // ########################
   // Gas - in addition to ABSTRACT-SEMANTICS-COMMON
   // ########################
@@ -35,6 +34,6 @@ module ABSTRACT-SEMANTICS
   // EXTCODESIZE
   // ########################
 
-    rule <k> EXTCODESIZE ACCT => #extCodeSize(ACCT) ~> #push ... </k>  [trusted]
+  rule <k> EXTCODESIZE ACCT => #extCodeSize(ACCT) ~> #push ... </k>  [trusted]
 
 endmodule

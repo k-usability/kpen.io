@@ -2,101 +2,103 @@ requires "abstract-semantics.k"
 requires "verification.k"
 
 module {{{rule-name}}}
-imports ETHEREUM-SIMULATION
-imports ABSTRACT-SEMANTICS
-imports VERIFICATION
-
+    imports ABSTRACT-SEMANTICS
+    imports VERIFICATION
 
     rule
-        <k> {{{k}}} </k>
-        <exit-code> {{{exit-code}}} </exit-code>
-        <mode> {{{mode}}} </mode>
-        <schedule> {{{schedule}}} </schedule>
-        <analysis> {{{analysis}}} </analysis>
-        <ethereum>
-          <evm>
-            <output> {{{output}}} </output>
-            <statusCode> {{{statusCode}}} </statusCode>
-            <callStack> {{{callStack}}} </callStack>
-            <interimStates> {{{interimStates}}} </interimStates>
-            <touchedAccounts> {{{touchedAccounts}}} </touchedAccounts>
-            <callState>
-              <program> {{{program}}} </program>
-              <programBytes> {{{programBytes}}} </programBytes>
-              <id> {{{id}}} </id> // this
-              <caller> {{{caller}}} </caller>
-              <callData> {{{callData}}} </callData>
-              <callValue> {{{callValue}}} </callValue>
-              <wordStack> {{{wordStack}}} </wordStack>
-              <localMem> {{{localMem}}} </localMem>
-              <pc> {{{pc}}} </pc>
-              <gas> {{{gas}}} </gas>
-              <memoryUsed> {{{memoryUsed}}} </memoryUsed>
-              <previousGas> {{{previousGas}}} </previousGas>
-              <static> {{{static}}} </static>
-              <callDepth> {{{callDepth}}} </callDepth>
-            </callState>
-            <substate>
-              <selfDestruct> {{{selfDestruct}}} </selfDestruct>
-              <log> {{{[log]}}} </log>
-              <refund> {{{refund}}} </refund>
-            </substate>
-            <gasPrice> {{{gasPrice}}} </gasPrice>
-            <origin> {{{origin}}} </origin>
-            <previousHash> {{{previousHash}}} </previousHash>
-            <ommersHash> {{{ommersHash}}} </ommersHash>
-            <coinbase> {{{coinbase}}} </coinbase>
-            <stateRoot> {{{stateRoot}}} </stateRoot>
-            <transactionsRoot> {{{transactionRoot}}} </transactionsRoot>
-            <receiptsRoot> {{{receiptsRoot}}} </receiptsRoot>
-            <logsBloom> {{{logsBloom}}} </logsBloom>
-            <difficulty> {{{difficulty}}} </difficulty>
-            <number> {{{number}}} </number>
-            <gasLimit> {{{gasLimit}}} </gasLimit>
-            <gasUsed> {{{gasUsed}}} </gasUsed>
-            <timestamp> {{{timestamp}}} </timestamp>
-            <extraData> {{{extraData}}} </extraData>
-            <mixHash> {{{mixHash}}} </mixHash>
-            <blockNonce> {{{blockNonce}}} </blockNonce>
-            <ommerBlockHeaders> {{{ommerBlockHeaders}}} </ommerBlockHeaders>
-            <blockhash> {{{blockhash}}} </blockhash>
-          </evm>
-          <network>
-            <activeAccounts> SetItem(#CONTRACT_ID) SetItem(#CALLEE_ID) SetItem(1) _:Set </activeAccounts>
-            <accounts>
-              <account>
-                <acctID> #CONTRACT_ID </acctID>
-                <balance> {{{balance}}} </balance>
-                <code> #parseByteStack({{{contractCode}}}) </code>
-                <storage> {{{storage}}} </storage>
-                <origStorage> {{{origStorage}}} </origStorage>
-                <nonce> {{{nonce}}} </nonce>
-              </account>
+        <kevm>
+            <k> {{{k}}} </k>
+            <exit-code> {{{exit-code}}} </exit-code>
+            <mode> {{{mode}}} </mode>
+            <schedule> {{{schedule}}} </schedule>
+            <ethereum>
+              <evm>
+                <output> {{{output}}} </output>
+                <statusCode> {{{statusCode}}} </statusCode>
+                <callStack> {{{callStack}}} </callStack>
+                <interimStates> {{{interimStates}}} </interimStates>
+                <touchedAccounts> {{{touchedAccounts}}} </touchedAccounts>
+                <callState>
+                  <program> {{{program}}} </program>
+                  <jumpDests> {{{jumpDests}}} </jumpDests>
 
-              <account>
-                <acctID> #CALLEE_ID </acctID>
-                <balance> {{{calleeBalance}}} </balance>
-                <code> {{{calleeCode}}} </code>
-                <storage> {{{calleeStorage}}} </storage>
-                <origStorage> {{{calleeOrigStorage}}} </origStorage>
-                <nonce> {{{calleeNonce}}} </nonce>
-              </account>
+                  <id> {{{id}}} </id> // this
+                  <caller> {{{caller}}} </caller>
+                  <callData> {{{callData}}} </callData>
+                  <callValue> {{{callValue}}} </callValue>
+                  <wordStack> {{{wordStack}}} </wordStack>
+                  <localMem> {{{localMem}}} </localMem>
+                  <pc> {{{pc}}} </pc>
+                  <gas> {{{gas}}} </gas>
+                  <memoryUsed> {{{memoryUsed}}} </memoryUsed>
+                  <callGas> {{{callGas}}} </callGas>
+                  <static> {{{static}}} </static>
+                  <callDepth> {{{callDepth}}} </callDepth>
+                </callState>
+                <substate>
+                  <selfDestruct> {{{selfDestruct}}} </selfDestruct>
+                  <log> {{{[log]}}} </log>
+                  <refund> {{{refund}}} </refund>
+                </substate>
+                <gasPrice> {{{gasPrice}}} </gasPrice>
+                <origin> {{{origin}}} </origin>
+                <blockhashes> {{{blockhashes}}} </blockhashes>
+                <block>
+                    <previousHash> {{{previousHash}}} </previousHash>
+                    <ommersHash> {{{ommersHash}}} </ommersHash>
+                    <coinbase> {{{coinbase}}} </coinbase>
+                    <stateRoot> {{{stateRoot}}} </stateRoot>
+                    <transactionsRoot> {{{transactionRoot}}} </transactionsRoot>
+                    <receiptsRoot> {{{receiptsRoot}}} </receiptsRoot>
+                    <logsBloom> {{{logsBloom}}} </logsBloom>
+                    <difficulty> {{{difficulty}}} </difficulty>
+                    <number> {{{number}}} </number>
+                    <gasLimit> {{{gasLimit}}} </gasLimit>
+                    <gasUsed> {{{gasUsed}}} </gasUsed>
+                    <timestamp> {{{timestamp}}} </timestamp>
+                    <extraData> {{{extraData}}} </extraData>
+                    <mixHash> {{{mixHash}}} </mixHash>
+                    <blockNonce> {{{blockNonce}}} </blockNonce>
+                    <ommerBlockHeaders> {{{ommerBlockHeaders}}} </ommerBlockHeaders>
+                </block>
+              </evm>
+              <network>
+                <activeAccounts> SetItem(#CONTRACT_ID) SetItem(#CALLEE_ID) SetItem(1) _:Set </activeAccounts>
+                <accounts>
+                  <account>
+                    <acctID> #CONTRACT_ID </acctID>
+                    <balance> {{{balance}}} </balance>
+                    <code> #parseByteStack({{{contractCode}}}) </code>
+                    <storage> {{{storage}}} </storage>
+                    <origStorage> {{{origStorage}}} </origStorage>
+                    <nonce> {{{nonce}}} </nonce>
+                  </account>
 
-              <account>
-                <acctID> 1 </acctID>
-                <balance> 0 </balance>
-                <code> .WordStack </code>
-                <storage> .Map </storage>
-                <origStorage> .Map </origStorage>
-                <nonce> 0 </nonce>
-              </account>
-              ...
-            </accounts>
-            <txOrder> {{{txOrder}}} </txOrder>
-            <txPending> {{{txPending}}} </txPending>
-            <messages> {{{messages}}} </messages>
-          </network>
-        </ethereum>
+                  <account>
+                    <acctID> #CALLEE_ID </acctID>
+                    <balance> {{{calleeBalance}}} </balance>
+                    <code> {{{calleeCode}}} </code>
+                    <storage> {{{calleeStorage}}} </storage>
+                    <origStorage> {{{calleeOrigStorage}}} </origStorage>
+                    <nonce> {{{calleeNonce}}} </nonce>
+                  </account>
+
+                  <account>
+                    <acctID> 1 </acctID>
+                    <balance> 0 </balance>
+                    <code> .WordStack </code>
+                    <storage> .Map </storage>
+                    <origStorage> .Map </origStorage>
+                    <nonce> 0 </nonce>
+                  </account>
+                  ...
+                </accounts>
+                <txOrder> {{{txOrder}}} </txOrder>
+                <txPending> {{{txPending}}} </txPending>
+                <messages> {{{messages}}} </messages>
+              </network>
+            </ethereum>
+        </kevm>
         requires
         {{{requires}}}
         ensures

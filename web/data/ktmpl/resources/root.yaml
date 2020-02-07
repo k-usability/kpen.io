@@ -7,14 +7,13 @@ spec:
           exit-code: 1
           mode: NORMAL
           schedule: BYZANTIUM
-          analysis: .Map
           output: _
           statusCode: _
           callStack: _
           interimStates: _
           touchedAccounts: _
-          program: \#asMapOpCodes(\#dasmOpCodes(\#parseByteStack({{{contractCode}}}), BYZANTIUM))
-          programBytes: \#parseByteStack({{{contractCode}}})
+          program: \#parseByteStack({{{contractCode}}})
+          jumpDests: \#computeValidJumpDests(#parseByteStack({{{contractCode}}}))
           id: \#CONTRACT_ID
           caller: MSG_SENDER
           callData: _
@@ -24,7 +23,7 @@ spec:
           pc: 0
           gas: \#gas(INITGAS, 0, 0)
           memoryUsed: 0
-          previousGas: _
+          callGas: _
           static: false
           callDepth: CD
           selfDestruct: _
@@ -32,6 +31,7 @@ spec:
           refund: _
           gasPrice: _
           origin: _
+          blockhashes: BLOCK_HASHES
           previousHash: _
           ommersHash: _
           coinbase: _
@@ -48,7 +48,6 @@ spec:
           mixHash: _
           blockNonce: _
           ommerBlockHeaders: _
-          blockhash: BLOCK_HASHES
 
           acctID: \#CONTRACT_ID
           balance: CONTRACT_BALANCE
@@ -91,5 +90,5 @@ spec:
           pc: _
           gas: _
           memoryUsed: _
-          previousGas: _
+          callGas: _
           coinbase: _

@@ -1,0 +1,17 @@
+FROM kenv:latest
+
+ENV LC_ALL=C.UTF-8
+
+RUN cd /home/user && \
+    git clone https://github.com/kframework/evm-semantics.git && \
+    cd evm-semantics && \
+    git submodule update --init --recursive && \
+    make deps && \
+    make build
+
+RUN cd /home/user && \
+    git clone https://github.com/kframework/wasm-semantics.git && \
+    cd wasm-semantics && \
+    git submodule update --init --recursive && \
+    make deps && \
+    make build

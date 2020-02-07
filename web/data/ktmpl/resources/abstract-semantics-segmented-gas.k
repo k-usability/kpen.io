@@ -1,8 +1,11 @@
 requires "evm-symbolic.k"
+requires "not-KLabel.k"
 
+//Older version that uses #notKLabel
 module ABSTRACT-SEMANTICS-SEGMENTED-GAS
   imports EVM
   imports EVM-SYMBOLIC
+  imports NOT-KLABEL
 
   // to avoid unnecessary case analyses
   rule <k> LT W0 W1 => bool2Word(W0  <Int W1) ~> #push ... </k> [trusted]
@@ -17,16 +20,20 @@ module ABSTRACT-SEMANTICS-SEGMENTED-GAS
   // accumulate the gas cost and never run out of gas
   rule <k> G ~> #deductGas => . ... </k>
        <gas> #gas(INITGAS, NONMEM, MEM) => #gas(INITGAS, NONMEM +Int G, MEM) </gas>
-       <previousGas> _ => #gas(INITGAS, NONMEM, MEM) </previousGas>
+       <callGas> _ => #gas(INITGAS, NONMEM, MEM) </callGas>
     requires #notKLabel(G, "#symCmem")
     [trusted, matching(#gas)]
 
   rule <k> #symCmem(MEM') ~> #deductGas => . ... </k>
        <gas> #gas(INITGAS, NONMEM, MEM) => #gas(INITGAS, NONMEM, MEM +Int MEM') </gas>
-       <previousGas> _ => #gas(INITGAS, NONMEM, MEM) </previousGas>
+       <callGas> _ => #gas(INITGAS, NONMEM, MEM) </callGas>
     [trusted, matching(#symCmem,#gas)]
 
-  rule <k> G ~> #deductGas ... </k>
+  //If G is not explicitly typed, it will be typed as G:K. This leads to intermittent SPEC ERROR below,
+  // in multi-threaded environment, on appliation of this rule.
+  // `java.lang.AssertionError: disjunctions are not supported by SMT translation`
+  // Issue cause: <k> contains 2 terms `#deductGas`, so for G:K, the rule can match in 2 ways. Observed with in hkg-erc20.
+  rule <k> G:KItem ~> #deductGas ... </k>
        <gas> INITGAS => #gas(INITGAS, 0, 0) </gas>
     requires #notKLabel(INITGAS, "#gas")
     [trusted]

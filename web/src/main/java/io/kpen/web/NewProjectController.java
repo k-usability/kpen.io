@@ -82,6 +82,7 @@ public class NewProjectController {
                 "ecrec-symbolic.k",
                 "lemmas.k",
                 "edsl-static-array.k",
+                "not-KLabel.k",
                 "evm.smt2"}) {
             File libf = getFile(resourcesDir, libk);
             copyFileToDirectory(libf, generatedDir);

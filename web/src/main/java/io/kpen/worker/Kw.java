@@ -25,7 +25,8 @@ public class Kw {
 
     public static Result run(Dotenv env, String genDir, String specFn, String kpath, String sempath, Integer timeoutSecs, Integer memLimitMb, String stdoutFn, String stderrFn) {
         String javaPath = env.get("APP_JAVA_PATH");
-        String cpPath = kpath + "/target/release/k/lib/java/*";
+        String cpPath1 = kpath + "/k-distribution/target/release/k/lib/java/*";
+        String cpPath2 = kpath + "/java-backend/target/java-backend-1.0-SNAPSHOT.jar";
         String smtpreludePath = genDir + "/evm.smt2";
         String specPath = genDir + "/" + specFn;
         String stdoutPath = genDir + "/" + stdoutFn;
@@ -41,7 +42,7 @@ public class Kw {
         args.add("-XX:+TieredCompilation");
         args.add("-ea");
         args.add("-cp");
-        args.add(cpPath);
+        args.add(cpPath1 + ":" + cpPath2);
         args.add("org.kframework.main.Main");
         args.add("-kprove");
         args.add("-v");

@@ -19,7 +19,7 @@ var DEFAULT_SPEC_TEXT = "spec:\n" +
     "      then:\n" +
     "        match:\n" +
     "          statusCode: EVMC_SUCCESS\n" +
-    "          output: \\#encodeArgs(#uint256(5))"
+    "          output: \\#encodeArgs(\\#uint256(5))"
 
 const NewProject = ({ location, history, showExample }) => {
     const edopt = {

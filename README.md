@@ -12,3 +12,9 @@
 * References
     - https://aws.amazon.com/premiumsupport/knowledge-center/terminate-https-traffic-eks-acm/
     
+# Generating containers
+```
+cd $HOME/evm-semantics && docker build -t kenv:latest -f Dockerfile .
+docker build -t ksem:latest -f Dockerfile.ksem
+docker build -t kpen:latest -f Dockerfile.kpen
+```

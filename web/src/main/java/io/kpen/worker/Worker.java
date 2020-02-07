@@ -29,8 +29,8 @@ public class Worker {
         String genDir = downDir + "/generated";
         String appKPath = env.get("APP_K_PATH");
 
-        String kpath = appKPath + "/" + job.getKprove() + "/k-distribution";
-        String sempath = appKPath + "/" + job.getSemantics() + "/.build/java";
+        String kpath = appKPath + "/" + job.getSemantics() + "/deps/k";
+        String sempath = appKPath + "/" + job.getSemantics() + "/.build/defn/java";
 
         String logKeyPrefix = job.getS3Key() + "/generated";
         String stdoutFn = "stdout.txt";
